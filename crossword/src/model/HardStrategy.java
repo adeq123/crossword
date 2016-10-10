@@ -1,12 +1,22 @@
 package model;
 
+import java.io.IOException;
 import java.util.*;
+
+import FitedExeptions.NoMatchingWords;
+import FitedExeptions.WrongCoordinatesException;
 import dictionary.*;
 
 public class HardStrategy extends Strategy{
 
-	@Override
-	public CwEntry findEntry(Crossword cw) throws Exception {
+	
+	/**
+	 * Method draw a direction of Entry and then draws a cell with correct ability (horizontal or vertical). Afterwards it draws
+	 * an Entry and checks if it can be fitted to the crossword
+	 * @throws WrongCoordinatesException 
+	 */
+	
+	public CwEntry findEntry(Crossword cw) throws NoMatchingWords, WrongCoordinatesException{
 		
 		Random rnd = new Random();
 		Board board = cw.getBoardCopy();

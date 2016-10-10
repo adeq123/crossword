@@ -7,6 +7,8 @@ package model;
 
 import java.util.LinkedList;
 
+import FitedExeptions.WrongCoordinatesException;
+
 public class Board {
 
 	private BoardCell [][] board;
@@ -99,9 +101,10 @@ public class Board {
 	 * @param int, tox x coordinate of the last sign
 	 * @param int, toy y coordinate of the first sign
 	 * @return String, regular expression based on letters between given  coordinates in the board
+	 * @throws WrongCoordinatesException 
 	 * @throws Exception
 	 */
-	public String createPattern(int fromCol, int fromRow, int toCol, int toRow) throws Exception{
+	public String createPattern(int fromCol, int fromRow, int toCol, int toRow) throws WrongCoordinatesException{
 		
 		String pattern = "";
 		
@@ -131,7 +134,7 @@ public class Board {
 
 			return pattern;
 		
-		}else throw new Exception ("Wrong coordinates the word needs to be either vertical or horizontal!!");
+		}else throw new WrongCoordinatesException();
 	 
 	//return pattern;
 }

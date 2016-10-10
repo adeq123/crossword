@@ -24,7 +24,7 @@ public class CwWriter implements Writer{
 		
 	}
 	
-	public void WriteCW(Crossword cw) throws Exception {
+	public void WriteCW(Crossword cw) throws IOException  {
 		
 		String cwFileName =Long.toString(getUniqueID());
 		File cwTxt = new File(cwFolder.getAbsolutePath()+"\\"+cwFileName);

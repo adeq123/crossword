@@ -14,6 +14,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import FitedExeptions.NoMatchingWords;
+import FitedExeptions.WrongCoordinatesException;
 import dictionary.InteliCwDB;
 import model.Strategy.strategyID;
 
@@ -119,9 +121,10 @@ public class Crossword {
 	/**
 	 * Generates a crissword
 	 * @param s
+	 * @throws WrongCoordinatesException 
 	 * @throws Exception 
 	 */
-	public final void generate(Strategy s) throws Exception{
+	public final void generate(Strategy s) throws NoMatchingWords, WrongCoordinatesException{
 		
 		  if(s instanceof EasyStrategy)
 			 strID = strategyID.Easy;

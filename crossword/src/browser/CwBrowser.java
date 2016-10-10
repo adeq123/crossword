@@ -7,6 +7,7 @@ import java.util.*;
 import model.*;
 import dictionary.*;
 import model.*;
+import FitedExeptions.*;
 
 public class CwBrowser {
 
@@ -42,9 +43,11 @@ public class CwBrowser {
      * @param height an int, height of crossword board
      * @param width an int, width of crossword board
      * @param strategyID, 0 = Easy strategy, 1 = hard strategy
+     * @throws IOException 
+     * @throws WrongCoordinatesException 
      * @throws Exception
      */
-    public void generateCW(int height, int width, int strategyID) throws Exception{
+    public void generateCW(int height, int width, int strategyID) throws NoMatchingWords, IOException, WrongCoordinatesException{
     	
     	tmp = new Crossword(height, width);
     	tmp.setCwDB(defaultCwDB);
@@ -64,9 +67,10 @@ public class CwBrowser {
     
     /**
      * save temporary (just generated) crossword to the folder (cwFolderPathStore) and makes it actual crossword. 
+     * @throws IOException 
      * @throws Exception
      */
-    public void saveAndMakeTmpActual() throws Exception{
+    public void saveAndMakeTmpActual() throws IOException{
     	actual = tmp;
     	crosswords.add(tmp);
     	myWriter.WriteCW(tmp);

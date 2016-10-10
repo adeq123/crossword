@@ -9,11 +9,15 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
+
+import FitedExeptions.NoMatchingWords;
+import FitedExeptions.WrongCoordinatesException;
+
 import java.io.*;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args)  {
 		// TODO Auto-generated method stub
 		
 		/*
@@ -58,10 +62,9 @@ public class Main {
 		String folderWithCws = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwbase";
 		BufferedReader menuInput = new BufferedReader(new InputStreamReader(System.in));
 		BufferedReader readInput= new BufferedReader(new InputStreamReader(System.in));
-		CwBrowser cwBrowser = new CwBrowser(cwDataBase, folderWithCws);
-		
-		
-		
+		CwBrowser cwBrowser;
+		try {
+			cwBrowser = new CwBrowser(cwDataBase, folderWithCws);
 		while(menu !=9){
 		System.out.println("MENU\n 1. Wygeneruj nowa krzyzowke\n 2. Nastepna krzyzowka \n 3. Poprzednia"
 				+ " krzyzowka \n 4. Wyswietl aktualna krzyzowke \n 5. Wczytaj wszytkie krzyzowki \n "
@@ -113,7 +116,16 @@ public class Main {
 	
 
 	}
-	
+		} catch (IOException e) {
+			System.out.println("Blad wejscia/wyjscia! sprawdz pliki wejsciowe i wyjsciowe!");
+			e.printStackTrace();
+		} catch (NoMatchingWords e) {
+			System.out.println("Nie znaleziono hasel dla podanych kryteriow! zmien kryteria lub uzupelnij baze.");
+			e.printStackTrace();
+		} catch (WrongCoordinatesException e) {
+			System.out.println("Niepoprawne wspolrzedne hasla");
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -103,7 +103,7 @@ public class InteliCwDB extends CwDB{
 	
 	
 	/**
-	 * Add new Entry to our List  in a alfabetical way
+	 * Add new Entry to our List  in a alphabetical way
 	 */
 	
 	public void add (String word, String clue){

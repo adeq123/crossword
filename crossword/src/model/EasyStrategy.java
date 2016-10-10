@@ -2,7 +2,7 @@ package model;
 
 import dictionary.Entry;
 import java.util.*;
-
+import FitedExeptions.*;
 public class EasyStrategy extends Strategy{
 
 	private CwEntry password;
@@ -17,12 +17,12 @@ public class EasyStrategy extends Strategy{
 	 * @return a String, random password from crossword database
 	 * @throws Exception
 	 */
-	public CwEntry generatePassword(Crossword cross, Board board) throws Exception{
+	public CwEntry generatePassword(Crossword cross, Board board) throws NoMatchingWords{
 	
 		LinkedList <Entry> passList = new LinkedList<Entry>();
 		passList = cross.getCwDB().findAll("[a-z,A-Z]{1,"+Integer.toString(board.getHeight())+"}");
 		
-		if(passList.isEmpty()) throw new Exception("No matching words");
+		if(passList.isEmpty()) throw new NoMatchingWords();
 		Entry tmp;
 		do{			
 			tmp = passList.get(rnd.nextInt(passList.size()-1));
@@ -63,10 +63,12 @@ public class EasyStrategy extends Strategy{
 		}
 		return true;
 	}
+	
 	/**
-	 * Finds an entry which starts with letter pointed by global variable index. Its length cannot exceede the size of the board
+	 * Finds an entry which starts with letter pointed by global variable index. Its length cannot exceed the size of the board. 
+	 * @return CwEntry with correct size and starting with correct word or null when crossowrd is full
 	 */
-	public CwEntry findEntry(Crossword cw) throws Exception {
+	public CwEntry findEntry(Crossword cw) throws NoMatchingWords {
 		
 		LinkedList <Entry> tmpList = null;;
 		Entry tmp = null;
