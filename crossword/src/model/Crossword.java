@@ -110,16 +110,16 @@ public class Crossword {
 	}
 	
 	/**
-	 * Method which add new CwEntry (standard entry + posistion and status) to the crossword according to preverd strategy
+	 * Method which add new CwEntry (standard entry + possistion and status) to the crossword according to preferd strategy
 	 * @param cwe CwEntry to be set
-	 * @param s Strategy to be uesed
+	 * @param s Strategy to be used
 	 */
 	public final void addCwEntry(CwEntry cwe, Strategy s){
 		  entries.add(cwe);
 		  s.updateBoard(this.b,cwe);
 		}
 	/**
-	 * Generates a crissword
+	 * Generates a crossword
 	 * @param s
 	 * @throws WrongCoordinatesException 
 	 * @throws Exception 
