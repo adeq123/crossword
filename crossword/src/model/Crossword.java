@@ -16,6 +16,7 @@ import java.util.*;
 
 import FitedExeptions.NoMatchingWords;
 import FitedExeptions.WrongCoordinatesException;
+import dictionary.Entry;
 import dictionary.InteliCwDB;
 import model.Strategy.strategyID;
 
@@ -50,14 +51,43 @@ public class Crossword {
 		
 	}
 	
-	public Crossword (int h, int w,long ID,File oneFile) throws IOException{	
-		this(h,w,ID);
-		String word;
-		int y = 0;
+	public Crossword (File oneFile) throws IOException{	
+		
 		BufferedReader czytaj = new BufferedReader(new FileReader(oneFile.getAbsolutePath()));
-		while(((word = czytaj.readLine()) != null)){
-			this.addCwEntry(new CwEntry(word," ",0,y,Direction.HORIZ), new EasyStrategy());
-			y++;
+		Strategy s;
+		if(Long.getLong(oneFile.getName().substring(0, oneFile.getName().length() - 4)) != null){
+			ID = Long.getLong(oneFile.getName().substring(0, oneFile.getName().length() - 4));
+		}else
+			ID = -1;
+		
+		if(czytaj.readLine().equals("Hard")){
+			this.strID = strategyID.Hard;
+			s = new HardStrategy();
+		}else
+			s = new EasyStrategy();
+		
+		this.b = new Board(czytaj.readLine().toCharArray()[1], czytaj.readLine().toCharArray()[2]);		
+		czytaj.readLine();
+		String line= czytaj.readLine();
+		
+		String word, clue;
+		int x,y;
+		Direction dir;
+		
+	  while(((line = czytaj.readLine()) != null)){
+		  word = Character.toString(line.toCharArray()[0]);
+		  clue = cwdb.get(Character.toString(line.toCharArray()[0])).getClue();
+		  x = Integer.parseInt(Character.toString(line.toCharArray()[1]));
+		  y = Integer.parseInt(Character.toString(line.toCharArray()[2]));
+		  if(Character.toString(line.toCharArray()[2]).equals("VERT")){
+			  dir = Direction.VERT;
+		  }else
+			  dir = Direction.HORIZ;
+		  
+		  
+		  this.addCwEntry(new CwEntry(word, clue, x, y, dir), s);
+	//		this.addCwEntry(new CwEntry(line," ",0,y,Direction.HORIZ), new EasyStrategy());
+	//		y++;
 		}
 		czytaj.close();
 		
@@ -67,8 +97,8 @@ public class Crossword {
 	 * 
 	 * @return read only iterator of entries (all entries in the given crossword)
 	 */
-	public Iterator<CwEntry> getROEntryIter(){
-		return Collections.unmodifiableList(entries).iterator();
+	public ListIterator<CwEntry> getROEntryIter(){
+		return Collections.unmodifiableList(entries).listIterator();
 	}
 		
 	/**
@@ -159,5 +189,35 @@ public class Crossword {
 	}
 	  public Board getBoard(){
 		  return b;
+	  }
+	  
+	  /**
+	   * 
+	   * @return number of vertical entries in this crossword
+	   */
+	  public int noOfVerEntries(){
+		  int noOfVerEntries = 0;
+		  
+		  for(int i = 0;i < entries.size();i++)
+			  if(entries.get(i).getD() == Direction.VERT)
+				  noOfVerEntries++;
+		  return noOfVerEntries;
+	  }
+	  
+	  /**
+	   * 
+	   * @return number of horizontal entries in this crossword
+	   */	  
+	  public int noOfHorEntries(){
+		  int noOfHorEntries = 0;
+		  
+		  for(int i = 0;i < entries.size();i++)
+			  if(entries.get(i).getD() == Direction.VERT)
+				  noOfHorEntries++;
+		  return noOfHorEntries;
+	  }
+	  
+	  public strategyID getStartegy(){
+		  return strID;
 	  }
 }

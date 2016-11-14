@@ -79,7 +79,7 @@ public class Main {
 			width = Integer.parseInt(readInput.readLine());
 			System.out.println("0 - prosty ksztalt krzyzowki krzyzowka, 1 - skomplikowany ksztalt krzyzowki");
 			strategyID = Integer.parseInt(readInput.readLine());
-			cwBrowser.generateCW(height, width, strategyID);
+			cwBrowser.generateCW(height, width, new HardStrategy());
 				
 		}else if(menu == 2){
 			cwBrowser.nextCW();

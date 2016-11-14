@@ -47,21 +47,13 @@ public class CwBrowser {
      * @throws WrongCoordinatesException 
      * @throws Exception
      */
-    public void generateCW(int height, int width, int strategyID) throws NoMatchingWords, IOException, WrongCoordinatesException{
+    public void generateCW(int height, int width, Strategy strID) throws NoMatchingWords, IOException, WrongCoordinatesException{
     	
     	tmp = new Crossword(height, width);
     	tmp.setCwDB(defaultCwDB);
-    	if(strategyID == 1){
-    		tmp.generate(hardStrategy);
-    		
-    		} else{
-    			
-    			tmp.generate(easyStrategy);
-    		}
-    	
+    	tmp.generate(strID);
     	updateIterator();
     	iteratorToTheEnd();
-    	System.out.print(tmp.printBoard());
     	saveAndMakeTmpActual();
     }
     
@@ -78,6 +70,24 @@ public class CwBrowser {
     	iteratorToTheEnd();
     	
     }
+    
+    /**
+     * save temporary crossword to the folder FilePath and makes it actual crossword. 
+     * @throws IOException 
+     * @throws Exception
+     */
+    public void saveAndMakeTmpActual(String path, String name) throws IOException, NoActualCw{
+    	if(actual == null)
+    		throw(new NoActualCw ());
+    	actual = tmp;
+    	crosswords.add(tmp);
+    	myWriter.changeCwWriterPath(path);
+    	myWriter.WriteCW(tmp, name);
+    	updateIterator();
+    	iteratorToTheEnd();
+    	
+    }
+    
     /**
      * 
      * @return List with all loaded crosswords
@@ -99,6 +109,20 @@ public class CwBrowser {
     	iteratorToTheEnd();
     }
     
+    /**
+     * Loads single crossword from file
+     * @param cwPath, path to one crossword in txt format 
+     * @throws IOException 
+     */
+    
+    public void loadSingleCwAndMakeAcutal(String cwPath) throws IOException{
+    	actual = myReader.loadOneCw(new File(cwPath));
+    	actual.printBoard();
+    	crosswords.add(actual);
+    	cwListIterator = crosswords.listIterator();
+    	updateIterator();
+    	iteratorToTheEnd();
+    }
     /**
      * moves list iterator further
      */
@@ -163,4 +187,10 @@ public class CwBrowser {
     	File folderWithCws = new File(cwFolderPathStore);
     	return folderWithCws.list().length == 0;
     }
+    
+    public void changeDataBasePath(String filePath) throws IOException{
+    	defaultCwDB = new InteliCwDB(filePath);
+    }
+    
+  
 }
