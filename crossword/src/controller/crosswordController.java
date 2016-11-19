@@ -7,6 +7,10 @@ import java.text.ParseException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import com.itextpdf.text.DocumentException;
+
+import FitedExeptions.FirstCwException;
+import FitedExeptions.LastCwExeption;
 import FitedExeptions.NoActualCw;
 import FitedExeptions.NoMatchingWords;
 import FitedExeptions.WrongCoordinatesException;
@@ -22,19 +26,28 @@ public class crosswordController {
 	private CwPanel cwPanel;
 	private String newDatabasePath;
 	private String crosswordPath;
+	private Strategy actualStrategy;
 	
 	public crosswordController (CwBrowser theModel, CrosswordView theView) {
 		
 		this.theModel = theModel;
 		this.theView = theView;
 		this.cwPanel = theView.getCwPanel();
+		this.actualStrategy = new HardStrategy();
+		this.theView.disableNext();
+		this.theView.disablePrevious();
 		this.theView.addGenerateListener(new GenerateListener());
 		this.theView.addSolveListener(new SolveListener());
 		this.theView.addDotsListener(new DotsListener());
 		this.theView.addLoadListener(new LoadListener());
 		this.theView.addSaveListener(new SaveListener());
 		this.theView.addLoadCwDotsListener(new LoadCwDotsListener());
-		this.theView.addLoadCwListener(new LoadCwListener());	
+		this.theView.addLoadCwListener(new LoadCwListener());
+		this.theView.addPrintCwListener(new PrintCwListener());
+		this.theView.addEasyStrategyListener(new EasyStrategyListener());
+		this.theView.addHardStrategyListener(new HardStrategyListener());
+		this.theView.addNextListener(new NextListener());
+		this.theView.addPreviousListener(new PreviousListener());
 	}
 	
 	public class GenerateListener implements ActionListener{
@@ -42,21 +55,26 @@ public class crosswordController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-			theModel.generateCW(theView.getCwHight(), theView.getCwWidth(), new HardStrategy());
+			theModel.generateCW(theView.getCwHight(), theView.getCwWidth(), actualStrategy);
 			cwPanel.setActualCw(theModel.getActualCws());
 			cwPanel.printSolvable();
-					
+			theView.enableNext();
+			theView.enablePrevious();
+			
 			} catch (NoMatchingWords e1) {
-				System.out.println("Nie znaleziono hasel dla podanych kryteriow! zmien kryteria lub uzupelnij baze.");
+				JOptionPane.showMessageDialog(theView,"No crossword was found for input entered. Please chage input data or database.");
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				System.out.println("Blad wejscia/wyjscia! sprawdz pliki wejsciowe i wyjsciowe!");
+				JOptionPane.showMessageDialog(theView,"Input / output error. Please check files used");
 				e1.printStackTrace();
 			} catch (WrongCoordinatesException e1) {
-				System.out.println("Niepoprawne wspolrzedne hasla");
+				JOptionPane.showMessageDialog(theView,"Incorrect coordinates of a word!");
 				e1.printStackTrace();
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (NoActualCw e1) {
+				JOptionPane.showMessageDialog(theView,"No actual cw please generate the crossword!");
 				e1.printStackTrace();
 			}
 			
@@ -124,11 +142,16 @@ public class crosswordController {
 					
 					theModel.loadSingleCwAndMakeAcutal(crosswordPath);
 					cwPanel.setActualCw(theModel.getActualCws());
+					cwPanel.printSolvable();
 				
 					
 				}catch (IOException e1) {
 					
 					JOptionPane.showMessageDialog(theView, "Input / output error. Please selected correct crossword file");
+				} catch (ParseException e1) {
+					
+					JOptionPane.showMessageDialog(theView, "Single letter only!");
+					e1.printStackTrace();
 				}
 			}else
 				JOptionPane.showMessageDialog(theView, "No file choosen! Please selected correct crossword file");
@@ -157,5 +180,92 @@ public class crosswordController {
 		    }
 			
 		}
+	public class PrintCwListener implements ActionListener{
+		
+		public void actionPerformed(ActionEvent e) {
+	        
+	        String fileName = null;
+	        
+	        int returnVal = theView.getCwChooser().showSaveDialog(null);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    	fileName = theView.getCwChooser().getSelectedFile().getAbsolutePath();
+		    }
+		    
+	        try {
+				theModel.printActual(fileName + ".pdf", cwPanel);
+			} catch (DocumentException  e1) {
+				JOptionPane.showMessageDialog(theView, "Problem with the file you want write to. Please check the file!");
+				e1.printStackTrace();
+			}catch (IOException   e2) {
+				JOptionPane.showMessageDialog(theView, "Problem with image you want to print out!");
+				e2.printStackTrace();
+			}
+		}
+		
+	}
 	
+	public class EasyStrategyListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			actualStrategy = new EasyStrategy();
+			
+		}
+		
+	}
+	
+	public class HardStrategyListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			actualStrategy = new HardStrategy();
+			
+		}
+		
+	}
+	
+	public class NextListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				theModel.nextCW();
+				theView.enablePrevious();
+			} catch (LastCwExeption e2) {
+				theView.disableNext();
+				JOptionPane.showMessageDialog(theView, e2.getMessage());
+			}
+			cwPanel.setActualCw(theModel.getActualCws());
+			try {
+				cwPanel.printSolvable();
+			} catch (ParseException e1) {
+				
+				
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public class PreviousListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				theModel.previousCW();
+				theView.enableNext();
+			} catch (FirstCwException e2) {
+				theView.disablePrevious();
+				JOptionPane.showMessageDialog(theView, e2.getMessage());
+			}
+			cwPanel.setActualCw(theModel.getActualCws());
+			try {
+				cwPanel.printSolvable();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
+	}
 }

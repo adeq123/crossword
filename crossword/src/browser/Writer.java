@@ -9,7 +9,7 @@ public interface Writer {
 	 * @param cw, Crossword to be written to the folder
 	 * @throws Exception 
 	 */
-	public void WriteCW (Crossword cw) throws Exception;
+	public void WriteCW (Crossword cw, String name) throws Exception;
 
 	/**
 	 * 

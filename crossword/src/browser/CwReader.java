@@ -2,15 +2,18 @@ package browser;
 
 import java.io.*;
 import java.util.*;
+
+import dictionary.InteliCwDB;
 import model.*;
 
 public class CwReader implements Reader{
 
 	File folderWithCWs;
 	LinkedList <Crossword> CwList = new LinkedList<Crossword>();
-	
-	public CwReader(String folderPath){
+	InteliCwDB defaultCwDB;
+	public CwReader(String folderPath, InteliCwDB defaultCwDB){
 		this.folderWithCWs = new File(folderPath);
+		this.defaultCwDB = defaultCwDB;
 	}
 	
 	public LinkedList <String> loadSingleCWToList(File oneFilePath) throws IOException{
@@ -31,13 +34,13 @@ public class CwReader implements Reader{
 		LinkedList <String> listWithWords;
 		File [] filesPathsArray = folderWithCWs.listFiles();
 		for(File oneFilePath:filesPathsArray){	
-			CwList.add(new Crossword(oneFilePath));
+			CwList.add(new Crossword(oneFilePath, defaultCwDB));
 			}
 		}
 		
 	public Crossword loadOneCw(File oneFilePath) throws IOException{
 		
-	return new Crossword(oneFilePath);
+	return new Crossword(oneFilePath, defaultCwDB);
 		
 	}
 	@Override
@@ -46,6 +49,11 @@ public class CwReader implements Reader{
 		
 	}
 
+	public void setDB(InteliCwDB defaultCwDB) {
+		this.defaultCwDB = defaultCwDB;
+		
+	}
+	
 	@Override
 	public LinkedList <Crossword> getAllCws() {
 		return CwList;

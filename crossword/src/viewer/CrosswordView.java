@@ -26,7 +26,7 @@ public class CrosswordView extends JFrame{
 		private JSpinner cwWidthSpinner;
 		private JButton genButton;
 		
-		private JButton drukuj;
+		private JButton print;
 		private JButton save;
 		private JButton solve;
 		
@@ -34,19 +34,25 @@ public class CrosswordView extends JFrame{
 		private JPanel loadPanel;
 		private JPanel controlPanel;
 		private JPanel loadCwPanel;
+		private JPanel strategyPanel;
+		private JPanel browserPanel;
 		private JButton loadCw;
 		private JButton loadCwDots;
 		private JButton load;
+		private JButton next;
+		private JButton previous;
 		private JFileChooser chooser;
 		private JFileChooser cwChooser;
 		private JFileChooser saver;
+		private JFileChooser printer;
 		private JButton dots;
 		
 		private JLabel heightLabel;
 		private JLabel widthLabel;
 		
-		
-		
+		private JRadioButton easyStrategy;
+		private JRadioButton hardStrategy;
+		private ButtonGroup group;
 		
 		CwPanel cwPanel;
 		Crossword actualCW;
@@ -95,9 +101,9 @@ public class CrosswordView extends JFrame{
         FileNameExtensionFilter filterCw = new FileNameExtensionFilter("Text file with crossword ","txt");
         cwChooser.setFileFilter(filterCw);
         
-        saver = new JFileChooser();
-       // saver.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        
+        saver = new JFileChooser();       
+        printer = new JFileChooser();
+
         
 		
 	}
@@ -126,12 +132,28 @@ public class CrosswordView extends JFrame{
 			heightLabel = new JLabel("Wysokosc ");
 			widthLabel = new JLabel("Szerokosc ");
 			genButton = new JButton("Generate");
-		
+			
 			generateCrossPanel.add(heightLabel);
 			generateCrossPanel.add(cwHeightSpinner);
 			generateCrossPanel.add(widthLabel);
 			generateCrossPanel.add(cwWidthSpinner);
 			generateCrossPanel.add(genButton);
+			
+
+			
+			strategyPanel = new JPanel();
+			strategyPanel.setBorder(BorderFactory.createTitledBorder("Strategy:"));
+			
+			easyStrategy = new JRadioButton("Easy");
+			hardStrategy = new JRadioButton("Hard");
+			hardStrategy.setSelected(true);
+			
+			group = new ButtonGroup();
+			group.add(easyStrategy);
+			group.add(hardStrategy);
+			
+			strategyPanel.add(easyStrategy);
+			strategyPanel.add(hardStrategy);
 			
 			loadPanel = new JPanel();
 			loadPanel.setBorder(BorderFactory.createTitledBorder("Load database"));
@@ -160,18 +182,28 @@ public class CrosswordView extends JFrame{
 			loadCwPanel.add(loadCwDots);
 			loadCwPanel.add(loadCw);
 			
-			drukuj = new JButton("Drukuj");
+			print = new JButton("Print");
 			save = new JButton("Save");
 			solve = new JButton("Solve");
 			
-			controlPanel.add(drukuj);
+			controlPanel.add(print);
 			controlPanel.add(save);
 			controlPanel.add(solve);
 			
+			next = new JButton("Next");
+			previous = new JButton("Previous");
+			
+			browserPanel = new JPanel();
+			browserPanel.setBorder(BorderFactory.createTitledBorder("Browser..."));
+			browserPanel.add(next);
+			browserPanel.add(previous);
+			
 			this.add(generateCrossPanel);
+			this.add(strategyPanel);
 			this.add(loadPanel);
 			this.add(controlPanel);
 			this.add(loadCwPanel);
+			this.add(browserPanel);
 			
 			}	
 	
@@ -217,6 +249,25 @@ public class CrosswordView extends JFrame{
 		save.addActionListener(buttonPressed);
 	}
 	
+	public void addPrintCwListener(ActionListener buttonPressed){
+		print.addActionListener(buttonPressed);
+	}
+	
+	public void addEasyStrategyListener(ActionListener strategySelected){
+		easyStrategy.addActionListener(strategySelected);
+	}
+	
+	public void addHardStrategyListener(ActionListener strategySelected){
+		hardStrategy.addActionListener(strategySelected);
+	}
+	
+	public void addNextListener(ActionListener buttonPressed){
+		next.addActionListener(buttonPressed);
+	}
+	
+	public void addPreviousListener(ActionListener buttonPressed){
+		previous.addActionListener(buttonPressed);
+	}
 	public CwPanel getCwPanel(){
 		return this.cwPanel;
 	}
@@ -231,5 +282,24 @@ public class CrosswordView extends JFrame{
 	
 	public JFileChooser getCwChooser(){
 		return cwChooser;
+	}
+	public JFileChooser getPrintChooser(){
+		return printer;
+	}
+	
+	
+	public void disableNext(){
+		next.setEnabled(false);
+	}
+	
+	public void enableNext(){
+		next.setEnabled(true);
+	}
+	public void disablePrevious(){
+		previous.setEnabled(false);
+	}
+	
+	public void enablePrevious(){
+		previous.setEnabled(true);
 	}
 }

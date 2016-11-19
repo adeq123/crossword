@@ -50,44 +50,51 @@ public class Crossword {
 		this(h,w,-1);
 		
 	}
-	
-	public Crossword (File oneFile) throws IOException{	
-		
+	/**
+	 * Loads a crossword from a file
+	 * @param oneFile a path to the crossword to be loaded
+	 * @param cwdb a database to be used to find clues for this crossword
+	 * @throws IOException
+	 */
+	public Crossword (File oneFile, InteliCwDB cwdb) throws IOException{
+		this.cwdb = cwdb;
+		String line;
 		BufferedReader czytaj = new BufferedReader(new FileReader(oneFile.getAbsolutePath()));
 		Strategy s;
 		if(Long.getLong(oneFile.getName().substring(0, oneFile.getName().length() - 4)) != null){
 			ID = Long.getLong(oneFile.getName().substring(0, oneFile.getName().length() - 4));
 		}else
 			ID = -1;
+		line = czytaj.readLine();
 		
-		if(czytaj.readLine().equals("Hard")){
+		if(line.equals("Hard")){
 			this.strID = strategyID.Hard;
 			s = new HardStrategy();
 		}else
 			s = new EasyStrategy();
 		
-		this.b = new Board(czytaj.readLine().toCharArray()[1], czytaj.readLine().toCharArray()[2]);		
+		line= czytaj.readLine();
+		this.b = new Board(Integer.parseInt(line.split(" ")[0]), Integer.parseInt(line.split(" ")[1]));		
+		
 		czytaj.readLine();
-		String line= czytaj.readLine();
 		
 		String word, clue;
 		int x,y;
 		Direction dir;
 		
-	  while(((line = czytaj.readLine()) != null)){
-		  word = Character.toString(line.toCharArray()[0]);
-		  clue = cwdb.get(Character.toString(line.toCharArray()[0])).getClue();
-		  x = Integer.parseInt(Character.toString(line.toCharArray()[1]));
-		  y = Integer.parseInt(Character.toString(line.toCharArray()[2]));
-		  if(Character.toString(line.toCharArray()[2]).equals("VERT")){
+	  while((!(line = czytaj.readLine()).equals("***end***"))){
+		  word = line.split(" ")[0];
+		  clue = cwdb.get(word).getClue();
+		  x = Integer.parseInt(line.split(" ")[1]);
+		  y = Integer.parseInt(line.split(" ")[2]);
+		  if(line.split(" ")[3].equals("VERT")){
 			  dir = Direction.VERT;
 		  }else
 			  dir = Direction.HORIZ;
 		  
 		  
-		  this.addCwEntry(new CwEntry(word, clue, x, y, dir), s);
-	//		this.addCwEntry(new CwEntry(line," ",0,y,Direction.HORIZ), new EasyStrategy());
-	//		y++;
+		 this.addCwEntry(new CwEntry(word, clue, x, y, dir), s);
+
 		}
 		czytaj.close();
 		
@@ -148,6 +155,7 @@ public class Crossword {
 		  entries.add(cwe);
 		  s.updateBoard(this.b,cwe);
 		}
+	
 	/**
 	 * Generates a crossword
 	 * @param s
@@ -171,7 +179,11 @@ public class Crossword {
 		return entries.isEmpty();
 		
 	}
-//needs improvement....
+
+/**
+ * prints a crosswords board sign by sign
+ * @return
+ */
 	public String printBoard(){
 		
 		String cwString ="";

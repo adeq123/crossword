@@ -20,6 +20,7 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.text.MaskFormatter;
 
+import FitedExeptions.NoActualCw;
 import model.Crossword;
 import model.CwEntry;
 import model.*;
@@ -49,9 +50,7 @@ public void paintComponent(Graphics g){
 	
 	int vertCounter = 1;
 	int horCounter = 1;
-	int cwEntryNo = 1;
-	int horIncrement = 1;
-	int verIncrement = 1;
+
 	
 	//print numbers by the entries
 	if(actualCw != null){
@@ -73,7 +72,19 @@ public void paintComponent(Graphics g){
 			}		
 		}
 		
-		// draw crossword sqaures
+		drawCwSquares(g2);
+		printOutClues(g2, cwEntryIter);
+
+
+	}
+}
+
+/**
+ * This method prints the crosswords' squares on the panel
+ * @param g2, the object used to print the squares on the 
+ */
+public void drawCwSquares(Graphics2D g2){
+	
 	for(int col = 0; col < actualCw.getBoard().getWidth(); col ++)
 		for(int row = 0; row < actualCw.getBoard().getHeight(); row ++){
 			if(actualCw.getBoard().getCell(row, col).checkContent()){
@@ -84,7 +95,14 @@ public void paintComponent(Graphics g){
 
 			}
 		}
-	//printout clues
+	
+}
+
+public void printOutClues(Graphics2D g2, ListIterator <CwEntry> cwEntryIter){
+	
+	int horIncrement = 1;
+	int verIncrement = 1;
+	
 	if(actualCw.noOfHorEntries() > 0)
 		g2.drawString("Horizontal", 25, actualCw.getBoardCopy().getHeight()*SQUARE_SIDE + SQUARE_SIDE*4); 	
 	
@@ -103,13 +121,13 @@ public void paintComponent(Graphics g){
 		}
 			
 	}
-	}
-}
 	
+}
+
 public CwPanel(){
 	
 
-		this.setBorder(BorderFactory.createTitledBorder("Wygenerowana krzyzowka..."));
+		this.setBorder(BorderFactory.createTitledBorder("Generated crossword."));
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
 		
@@ -149,7 +167,7 @@ public void printSolved(){
 			for(int row = 0; row < actualCw.getBoard().getHeight(); row ++){
 				if(actualCw.getBoard().getCell(row, col).checkContent()){
 					tmpTextField = txtFieldsIter.next();
-					if(actualCw.getBoardCopy().getCell(row, col).getContent().equals(tmpTextField.getText())){
+					if(actualCw.getBoardCopy().getCell(row, col).getContent().equalsIgnoreCase(tmpTextField.getText())){
 						tmpTextField.setForeground(Color.GREEN);
 					}else{
 						tmpTextField.setValue(actualCw.getBoardCopy().getCell(row, col).getContent());
