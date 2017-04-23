@@ -20,7 +20,7 @@ import FitedExeptions.NoActualCw;
 
 public class CwWriter implements Writer{
 	
-	File cwFolder;
+	private File cwFolder;
 	
 
 	/**

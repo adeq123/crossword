@@ -8,9 +8,9 @@ import model.*;
 
 public class CwReader implements Reader{
 
-	File folderWithCWs;
-	LinkedList <Crossword> CwList = new LinkedList<Crossword>();
-	InteliCwDB defaultCwDB;
+	private File folderWithCWs;
+	private LinkedList <Crossword> CwList = new LinkedList<Crossword>();
+	private InteliCwDB defaultCwDB;
 	public CwReader(String folderPath, InteliCwDB defaultCwDB){
 		this.folderWithCWs = new File(folderPath);
 		this.defaultCwDB = defaultCwDB;
