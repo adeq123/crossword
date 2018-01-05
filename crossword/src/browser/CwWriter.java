@@ -47,6 +47,9 @@ public class CwWriter implements Writer{
     public void WriteCW(Crossword cw, String name) throws IOException {
 
 	String cwFileName = name;
+	if(!cwFolder.exists()){
+	    cwFolder.mkdirs();
+	}
 	File cwTxt = new File(cwFolder.getAbsolutePath()+"\\"+cwFileName+".txt");
 	cwTxt.createNewFile();
 

@@ -20,7 +20,7 @@ public class CwBrowser {
     private Crossword actual; // actual crossword
     private CwWriter myWriter;
     private CwReader myReader;
-    private Crossword tmp; // actual crossword
+    private Crossword tmp;
     private String cwFolderPathStore;
     private InteliCwDB defaultCwDB;
     private boolean previousWasPressed = false;

@@ -19,8 +19,8 @@ public class main1 {
 	CwBrowser theBrowser;
 	CrosswordView theView;
 
-	String cwDataBase = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwdb.txt";
-	String folderWithCws = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwbase";
+	String cwDataBase = "cwdb.txt";
+	String folderWithCws = "C:\\Users\\Public\\cwbase";
 
 	theView = new CrosswordView();		
 	try {

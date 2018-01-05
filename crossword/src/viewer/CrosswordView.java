@@ -129,8 +129,8 @@ public class CrosswordView extends JFrame{
 	    cwWidthSpinner = new JSpinner(widthSpinnerModel);
 	    cwWidthSpinner.setPreferredSize(new Dimension(33, cwWidthSpinner.getPreferredSize().height));
 
-	    heightLabel = new JLabel("Wysokosc ");
-	    widthLabel = new JLabel("Szerokosc ");
+	    heightLabel = new JLabel("Hight ");
+	    widthLabel = new JLabel("Width ");
 	    genButton = new JButton("Generate");
 
 	    generateCrossPanel.add(heightLabel);
