@@ -40,3 +40,4 @@ Core datastructures used: Arrays, LinkedList
 Adrian Roguski with gudience included on AGH object oriented programming course webside
 
 ## Screenshots
+![](images/Hard.png)
