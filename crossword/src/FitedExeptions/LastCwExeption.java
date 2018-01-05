@@ -6,17 +6,17 @@ package FitedExeptions;
  *
  */
 public class LastCwExeption extends Exception{
-	
-		public LastCwExeption() {
-			
-			super("That is the last crossword on the list :( ");
-		
-		}
-		
-		public LastCwExeption(String messeage) {
-		
-			super(messeage);
-		
-		
-	}
+
+    public LastCwExeption() {
+
+	super("That is the last crossword on the list :( ");
+
+    }
+
+    public LastCwExeption(String messeage) {
+
+	super(messeage);
+
+
+    }
 }

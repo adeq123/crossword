@@ -7,16 +7,16 @@ package FitedExeptions;
  */
 public class NoActualCw extends Exception{
 
-	public NoActualCw() {
-		
-		super("There is not actual crossword generated. Genrate the crossword or load one from the file ");
-	
-	}
-	
-	public NoActualCw(String messeage) {
-	
-		super(messeage);
-	
-	}
+    public NoActualCw() {
+
+	super("There is not actual crossword generated. Genrate the crossword or load one from the file ");
+
+    }
+
+    public NoActualCw(String messeage) {
+
+	super(messeage);
+
+    }
 
 }

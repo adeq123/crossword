@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import model.*;
 
 public interface Reader {
-	
-	public void setFolder(String folderPath);
-	public LinkedList <Crossword> getAllCws();
+
+    public void setFolder(String folderPath);
+    public LinkedList <Crossword> getAllCws();
 
 }

@@ -11,26 +11,26 @@ import viewer.*;
 
 
 public class main1 {
-	
-	
-	public static void main(String[] args) {
-		
-		crosswordController theController;
-		CwBrowser theBrowser;
-		CrosswordView theView;
-		
-		String cwDataBase = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwdb.txt";
-		String folderWithCws = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwbase";
-		
-		theView = new CrosswordView();		
-		try {
-			theBrowser = new CwBrowser(cwDataBase, folderWithCws);
-			theController = new crosswordController(theBrowser, theView);
-			
-		} catch (IOException e) {
-			System.out.println("Blad wejscia/wyjscia! sprawdz pliki wejsciowe i wyjsciowe!");
-		}
-				
-		
+
+
+    public static void main(String[] args) {
+
+	crosswordController theController;
+	CwBrowser theBrowser;
+	CrosswordView theView;
+
+	String cwDataBase = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwdb.txt";
+	String folderWithCws = "C:\\Users\\RoguskiA\\Documents\\GitHub\\cwbase";
+
+	theView = new CrosswordView();		
+	try {
+	    theBrowser = new CwBrowser(cwDataBase, folderWithCws);
+	    theController = new crosswordController(theBrowser, theView);
+
+	} catch (IOException e) {
+	    System.out.println("Blad wejscia/wyjscia! sprawdz pliki wejsciowe i wyjsciowe!");
 	}
+
+
+    }
 }

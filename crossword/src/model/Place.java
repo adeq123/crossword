@@ -7,6 +7,6 @@ package model;
  */
 
 public enum Place {
-	
-	START, INNER, END;
+
+    START, INNER, END;
 }
