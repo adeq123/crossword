@@ -40,4 +40,8 @@ Core datastructures used: Arrays, LinkedList
 Adrian Roguski with gudience included on AGH object oriented programming course webside
 
 ## Screenshots
-![](images/Hard.png)
+  Solved crossword. Green fields were correct the readones not. Crossword was generated with Easy strategy  
+![](crossword/images/easy.png)
+  Solved crossword. Green fields were correct the readones not. Crossword was generated with Hard strategy  
+![](crossword/images/Hard.png)
+
