@@ -33,8 +33,8 @@ To run it copy the resository to your ide and run main method included in the Ma
     
 
 ## Concepts used:
-Java SE, Javadoc, Swing, MVC, Bilder pattern,
-Core datastructures used: Arrays, LinkedList
+Java SE, Javadoc, Swing, MVC, Bilder pattern.  
+Core datastructures used: Arrays, LinkedList.  
 File Handling - reading / writing to txt file. PDF generation.
 
 ## Author
