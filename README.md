@@ -33,10 +33,16 @@ To run it copy the resository to your ide and run main method included in the Ma
     
 
 ## Concepts used:
-Java SE, Javadoc, Swing, MVC, Bilder pattern,
-Core datastructures used: Arrays, LinkedList
+Java SE, Javadoc, Swing, MVC, Bilder pattern.  
+Core datastructures used: Arrays, LinkedList.  
+File Handling - reading / writing to txt file. PDF generation.
 
 ## Author
 Adrian Roguski with gudience included on AGH object oriented programming course webside
 
 ## Screenshots
+  Solved crossword. Green fields were correct the readones not. Crossword was generated with Easy strategy  
+![](crossword/images/easy.png)
+  Solved crossword. Green fields were correct the readones not. Crossword was generated with Hard strategy  
+![](crossword/images/Hard.png)
+
