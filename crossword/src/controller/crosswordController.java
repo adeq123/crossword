@@ -58,9 +58,10 @@ public class crosswordController {
 		theModel.generateCW(theView.getCwHight(), theView.getCwWidth(), actualStrategy);
 		cwPanel.setActualCw(theModel.getActualCws());
 		cwPanel.printSolvable();
-		theView.enableNext();
-		theView.enablePrevious();
-
+		if(theModel.isMoreThenOneCw()){
+		    theView.enableNext();
+		    theView.enablePrevious();
+		}
 	    } catch (NoMatchingWords e1) {
 		JOptionPane.showMessageDialog(theView,"No crossword was found for input entered. Please chage input data or database.");
 		e1.printStackTrace();

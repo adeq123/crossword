@@ -1,18 +1,10 @@
 package viewer;
 import java.io.IOException;
 
-import FitedExeptions.NoMatchingWords;
-import FitedExeptions.WrongCoordinatesException;
 import browser.CwBrowser;
 import controller.crosswordController;
-import dictionary.*;
-import model.*;
-import viewer.*;
 
-
-public class main1 {
-
-
+public class Main {
     public static void main(String[] args) {
 
 	crosswordController theController;

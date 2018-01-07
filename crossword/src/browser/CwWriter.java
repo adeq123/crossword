@@ -2,75 +2,68 @@ package browser;
 
 import model.Crossword;
 import model.CwEntry;
-import viewer.CwPanel;
-
 import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
-
-import FitedExeptions.NoActualCw;
-
+/**
+ * This class model crossword writer which is used to write the crossword to TXT file or generate the PDF file. 
+ * @author ADRO
+ */
 public class CwWriter implements Writer{
 
-    private File cwFolder;
-
+    private File cwFolder; 
 
     /**
-     * Method which writes corssword to the folder
-     * @param cw, Crossword to be written to the folder
-     * @throws FileNotFoundException 
+     * Constructs new crossword writer.
+     * If folder doesn't exist it will be created (including subfolders).
+     * @param cwFolderPath, path to folder where crosswords are written. 
+     * @throws FileNotFoundException
      */
-
     public CwWriter (String cwFolderPath) throws FileNotFoundException{
-
 	this.cwFolder = new File(cwFolderPath);
-
-
-
     }
 
-
     /**
-     * Writes a crossword cw with name to the file with correct formatting that can read afterwards
+     * Writes a crossword, with given name, to the file with correct formatting that can read afterwards. 
+     * If folder doesn't exist it will be created (including subfolders).
      * @param cw, crossword to be written
      * @param name, name of crossword
      * @throws IOException
      */
-    public void WriteCW(Crossword cw, String name) throws IOException {
-
+    public void WriteCW(Crossword oneCrossword, String name) throws IOException {
 	String cwFileName = name;
+
 	if(!cwFolder.exists()){
 	    cwFolder.mkdirs();
 	}
+
 	File cwTxt = new File(cwFolder.getAbsolutePath()+"\\"+cwFileName+".txt");
 	cwTxt.createNewFile();
-
 	BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cwTxt.getAbsolutePath())));
-
-	writer.write(cw.getStartegy().toString()+System.lineSeparator());
-	writer.write(Integer.toString(cw.getBoard().getWidth()) + " " + Integer.toString(cw.getBoard().getHeight()) + System.lineSeparator());
+	//write heading  - first line strategy, second size
+	writer.write(oneCrossword.getStartegy().toString()+System.lineSeparator());
+	writer.write(Integer.toString(oneCrossword.getBoard().getWidth()) + " " + Integer.toString(oneCrossword.getBoard().getHeight()) + System.lineSeparator());
 	writer.write("--------------List of words-----------------"+System.lineSeparator());
 
-	ListIterator <CwEntry> entriesIter = cw.getROEntryIter();
+	ListIterator <CwEntry> entriesIter = oneCrossword.getROEntryIter();
 	CwEntry tmpEntry;
+	//write the list of words line by line
 	while(entriesIter.hasNext()){
 	    tmpEntry = entriesIter.next();
 	    writer.write(tmpEntry.getWord() + " "  + tmpEntry.getX() + " " + tmpEntry.getY() + " " + tmpEntry.getD() + " " + System.lineSeparator());
 	}
 
 	writer.write( "***end***" + System.lineSeparator()+ System.lineSeparator());
-
-	String cwInString = cw.printBoard();
-	String [] cwLineByLine = cwInString.split("\n");
-	for(String word : cwLineByLine)
+	//write the board as it is
+	String crosswordBoard = oneCrossword.printBoard();
+	String [] boardLineByLine = crosswordBoard.split("\n");
+	for(String word : boardLineByLine)
 	    writer.write(word+System.lineSeparator());
 	writer.close();
 
@@ -86,30 +79,25 @@ public class CwWriter implements Writer{
      */
     public void printCwToPdf (java.awt.Image awtImage, String fileName) throws DocumentException, IOException{
 
-
 	Document doc = new Document();
 	doc.addTitle("Krzyzowka");
-	doc.addAuthor("Adrian Roguski");
 	doc.addCreationDate();
 	doc.setMargins(0, 0, 0, 0);
 	PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(
 		fileName));
 	doc.open();
-
-
 	Image iTextImage = Image.getInstance(writer, awtImage, 1);
 	iTextImage.setAlignment(0);
-	//iTextImage.setAbsolutePosition(0, 0);
 	iTextImage.scaleToFit(PageSize.A4.getWidth(), PageSize.A4.getHeight());
 	doc.add(iTextImage);
-
 	doc.close();
 
 
     }
+    
     /**
      * Creates the awt file based on component (ex. JFrame, JPanel)
-     * @param component
+     * @param component, Component to be printed
      * @return
      */
     public static java.awt.Image getImageFromPanel(Component component) {
@@ -122,7 +110,7 @@ public class CwWriter implements Writer{
 
 
     /**
-     * 
+     * Generates the unique ID based on time. 
      * @return long, Number of ms since 1970. Unique ID used for file naming
      */
     public long getUniqueID() {

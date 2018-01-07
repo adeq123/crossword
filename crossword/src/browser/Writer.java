@@ -1,7 +1,11 @@
 package browser;
 
 import model.*;
-
+/**
+ * This interface in general models writing crossword
+ * @author ADRO
+ *
+ */
 public interface Writer {
 
     /**

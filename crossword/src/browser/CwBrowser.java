@@ -2,7 +2,6 @@ package browser;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -10,14 +9,15 @@ import com.itextpdf.text.DocumentException;
 
 import model.*;
 import dictionary.*;
-import model.*;
 import FitedExeptions.*;
-
+/**
+ * This class models a crossword browser concept allowing you to go to previous, next crossword and generate crossword.
+ */
 public class CwBrowser {
 
-    private LinkedList<Crossword> crosswords = new LinkedList <Crossword> (); // vector of read crosswords
-    private ListIterator <Crossword> cwListIterator;// = crosswords.listIterator();
-    private Crossword actual; // actual crossword
+    private LinkedList<Crossword> loadedCrosswordsList = new LinkedList <Crossword> (); // vector of read crosswords
+    private ListIterator <Crossword> cwListIterator;
+    private Crossword actualCw; 
     private CwWriter myWriter;
     private CwReader myReader;
     private Crossword tmp;
@@ -28,7 +28,7 @@ public class CwBrowser {
 
     /**
      * Construct an abstract browser of crosswords
-     * @param cwDataBasePath a String, path to the base of Entries (txt)
+     * @param cwDataBasePath a String, path to the base of Entries (TXT)
      * @param cwFolderPathStore a String, path to the folder where all crosswords are stored
      * @throws IOException
      */
@@ -38,10 +38,11 @@ public class CwBrowser {
 	defaultCwDB = new InteliCwDB(cwDataBasePath);
 	myWriter = new CwWriter(cwFolderPathStore);
 	myReader = new CwReader(cwFolderPathStore, defaultCwDB);
-	crosswords = new LinkedList<>();
+	loadedCrosswordsList = new LinkedList<>();
     }
+    
     /**
-     * Generates a crossword for a given dimensions and choosen strategy
+     * Generates a crossword for a given dimensions and chosen strategy
      * @param height an int, height of crossword board
      * @param width an int, width of crossword board
      * @param strategyID, 0 = Easy strategy, 1 = hard strategy
@@ -63,15 +64,15 @@ public class CwBrowser {
 
 
     /**
-     * save temporary crossword to the folder FilePath and makes it actual crossword. 
+     * Saves temporary crossword to the folder FilePath and makes it actual crossword. 
      * @throws IOException 
      * @throws Exception
      */
     public void saveAndMakeTmpActual(String path, String name) throws IOException, NoActualCw{
-	actual = tmp;
-	if(actual == null)
+	actualCw = tmp;
+	if(actualCw == null)
 	    throw(new NoActualCw ());
-	crosswords.add(tmp);
+	loadedCrosswordsList.add(tmp);
 	myWriter.changeCwWriterPath(path);
 	myWriter.WriteCW(tmp, name);
 	updateIterator();
@@ -84,40 +85,39 @@ public class CwBrowser {
      * @return List with all loaded crosswords
      */
     public Crossword getActualCws (){
-	return this.actual;
+	return this.actualCw;
     }
 
     /**
-     * loads all crosswords from folder to linked list
+     * Loads all crosswords from folder to linked list
      * 
      * @throws NumberFormatException
      * @throws IOException
      */
     public void loadAllCwsFromFolder () throws NumberFormatException, IOException{
-	myReader.loadAllCwsToList();
-	crosswords = myReader.getAllCws();
-	cwListIterator = crosswords.listIterator();
+	loadedCrosswordsList = myReader.getAllCws();
+	cwListIterator = loadedCrosswordsList.listIterator();
 	updateIterator();
 	iteratorToTheEnd();
     }
 
     /**
-     * Loads single crossword from file
+     * Loads single crossword from specified file and makes it actual crossword
      * @param cwPath, path to one crossword in txt format 
      * @throws IOException 
      */
 
     public void loadSingleCwAndMakeAcutal(String cwPath) throws IOException{
-	actual = myReader.loadOneCw(new File(cwPath));
-	actual.printBoard();
-	crosswords.add(actual);
-	cwListIterator = crosswords.listIterator();
+	actualCw = myReader.loadOneCw(new File(cwPath));
+	actualCw.printBoard();
+	loadedCrosswordsList.add(actualCw);
+	cwListIterator = loadedCrosswordsList.listIterator();
 	updateIterator();
 	iteratorToTheEnd();
     }
 
     /**
-     * moves list iterator further
+     * Moves list iterator further
      * @throws LastCwExeption 
      */
     public void nextCW() throws LastCwExeption{
@@ -127,7 +127,7 @@ public class CwBrowser {
 	    previousWasPressed = false;
 	}
 	if(cwListIterator.hasNext()){
-	    actual = cwListIterator.next();
+	    actualCw = cwListIterator.next();
 	}else throw (new LastCwExeption ());	
     }
 
@@ -144,7 +144,7 @@ public class CwBrowser {
 	}
 
 	if(cwListIterator.hasPrevious()){
-	    actual = cwListIterator.previous();
+	    actualCw = cwListIterator.previous();
 	} else throw(new FirstCwException());
     }    
 
@@ -173,7 +173,7 @@ public class CwBrowser {
      * @return an int, number of crosswords in the list
      */
     public int getNumberOfCws(){
-	return crosswords.size();
+	return loadedCrosswordsList.size();
     }
 
     /**
@@ -181,14 +181,14 @@ public class CwBrowser {
      * @return
      */
     public boolean checkIfActualExist(){
-	return actual != null;
+	return actualCw != null;
     }
 
     /**
      * updates iterator to the current state of the list
      */
     public void updateIterator(){
-	cwListIterator = crosswords.listIterator();
+	cwListIterator = loadedCrosswordsList.listIterator();
     }
 
     /**
@@ -208,6 +208,14 @@ public class CwBrowser {
     public void changeDataBasePath(String filePath) throws IOException{
 	defaultCwDB = new InteliCwDB(filePath);
     }
-
-
+/**
+ * The method tells if there is more then one crossword loaded or not
+ * @return true,  if there is more then one crossword loaded, false otherwise
+ */
+    public boolean isMoreThenOneCw(){
+	if(loadedCrosswordsList == null || loadedCrosswordsList.size() <= 1){
+	    return false;
+	}
+	return true;
+    }
 }

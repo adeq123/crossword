@@ -21,7 +21,6 @@ public class CrosswordView extends JFrame{
     public final static int FRAME_WIDTH = 1000;
     public final static int FRAME_HIGHT = 900;
 
-
     private JSpinner cwHeightSpinner;
     private JSpinner cwWidthSpinner;
     private JButton genButton;
@@ -103,18 +102,10 @@ public class CrosswordView extends JFrame{
 
 	saver = new JFileChooser();       
 	printer = new JFileChooser();
-
-
-
     }
 
-
-
     public class TopPanel extends JPanel{
-
-
-
-
+	
 	public TopPanel(){
 
 	    setLayout(new GridLayout(2,3));
@@ -138,8 +129,6 @@ public class CrosswordView extends JFrame{
 	    generateCrossPanel.add(widthLabel);
 	    generateCrossPanel.add(cwWidthSpinner);
 	    generateCrossPanel.add(genButton);
-
-
 
 	    strategyPanel = new JPanel();
 	    strategyPanel.setBorder(BorderFactory.createTitledBorder("Strategy:"));
@@ -207,10 +196,7 @@ public class CrosswordView extends JFrame{
 
 	}	
 
-
-
     }
-
 
     public int getCwHight(){
 
