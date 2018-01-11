@@ -109,7 +109,7 @@ public class CwBrowser {
 
     public void loadSingleCwAndMakeAcutal(String cwPath) throws IOException{
 	actualCw = myReader.loadOneCw(new File(cwPath));
-	actualCw.printBoard();
+	actualCw.toString();
 	loadedCrosswordsList.add(actualCw);
 	cwListIterator = loadedCrosswordsList.listIterator();
 	updateIterator();

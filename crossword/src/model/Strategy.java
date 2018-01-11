@@ -1,10 +1,14 @@
 package model;
 
-import java.io.IOException;
-
 import FitedExeptions.NoMatchingWords;
 import FitedExeptions.WrongCoordinatesException;
 
+/**
+ * Abstract class modeling the algorithms used to generate the crossword.
+ * @author ADRO
+ * @see EasyStrategy
+ * @see HardStrategy
+ */
 public abstract class Strategy {
 
     public enum strategyID{

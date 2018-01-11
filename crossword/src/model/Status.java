@@ -3,7 +3,7 @@ package model;
 
 /**
  * Enumerator describing the status of the cell
- * @author RoguskiA
+ * @author ADRO
  *
  */
 public enum Status {

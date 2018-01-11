@@ -1,66 +1,73 @@
 package model;
 
-import java.io.IOException;
 import java.util.*;
 
 import FitedExeptions.NoMatchingWords;
 import FitedExeptions.WrongCoordinatesException;
 import dictionary.*;
 
-public class HardStrategy extends Strategy{
+/**
+ * Concrete class of Strategy abstract class. The algorithms generates the simple crossword for
+ * Crossword given. Hard strategy generates complex crossword where all of the phrases can cross
+ * and be either horizontal or vertical.
+ * @author ADRO
+ */
 
+public class HardStrategy extends Strategy{
 
     /**
      * Method draw a direction of Entry and then draws a cell with correct ability (horizontal or vertical). Afterwards it draws
      * an Entry and checks if it can be fitted to the crossword
      * @throws WrongCoordinatesException 
+     * @return an Entry, with random position on the board. Or NULL if it was not possible to match anything
      */
 
     public CwEntry findEntry(Crossword cw) throws NoMatchingWords, WrongCoordinatesException{
 
 	Random rnd = new Random();
 	Board board = cw.getBoardCopy();
-	LinkedList <BoardCell> startCell = board.getStartCells();
+	LinkedList <BoardCell> startCells = board.getStartCells();
 	BoardCell tmp;
 	Boolean flag = Boolean.FALSE;
 	CwEntry toReturn = null;
 
-	while(!startCell.isEmpty() && !flag){ 
+	while(!startCells.isEmpty() && !flag){ 
 	    if(cw.isEmpty()){ // if crossword is empty draw horizontal / vertical position and then cell
 		if(rnd.nextBoolean()){ //draw cell for horizontal Entry
-		    tmp = board.getCell(0, rnd.nextInt(board.getWidth()));
+		    tmp = board.getCell(0, rnd.nextInt(board.getWidth()));// -2 so that we do have at least 3 spots to match a word to be improved...
 		}else{	//draw cell for vertical Entry 				
-		    tmp = board.getCell(rnd.nextInt(board.getHeight()), 0 );
+		    tmp = board.getCell(rnd.nextInt(board.getHeight()), 0 );// -2 so that we do have at least 3 spots to match a word to be improved...
 		}
 
 	    }else{ //If crossword is not empty draw a cell from startCell list
-		tmp = startCell.get(rnd.nextInt(startCell.size()));
+		tmp = startCells.get(rnd.nextInt(startCells.size()));
 	    }
 
-	    if(tmp.getAbilities(BoardCell.VERTICAL, BoardCell.BEGINING)){ // if starting cell can be vertical 
-		int possibleSizeOfEntry = board.getHeight() - board.getVerticalPositionOfCell(tmp);
-		while(possibleSizeOfEntry>1 && !flag){
-
-
-		    if(checkAbilities(board, possibleSizeOfEntry, BoardCell.VERTICAL, 
+	    if(tmp.getAbilities(BoardCell.VERTICAL, BoardCell.BEGINING)){ // if starting cell is vertical 
+		int maxPossibleSizeOfEntry = board.getHeight() - board.getVerticalPositionOfCell(tmp);
+		while(maxPossibleSizeOfEntry > 1 && !flag){
+		    /*
+		     * First check if crossword is empty OR (if it is possible to put a word here checkAbilities() and if
+		     * it is possible to cross with any word already on the board) it is important to cross with the words
+		     * already on the board so that it look how it should
+		     */
+		    if(cw.isEmpty() || checkAbilities(board, maxPossibleSizeOfEntry, BoardCell.VERTICAL, 
 			    board.getHorizontalPositionOfCell(tmp), board.getVerticalPositionOfCell(tmp)) && checkIfHaveAnyContent(board, 
-				    possibleSizeOfEntry, BoardCell.VERTICAL, board.getHorizontalPositionOfCell(tmp), 
-				    board.getVerticalPositionOfCell(tmp)) || cw.isEmpty()){
+				    maxPossibleSizeOfEntry, BoardCell.VERTICAL, board.getHorizontalPositionOfCell(tmp), 
+				    board.getVerticalPositionOfCell(tmp))){
 
 			LinkedList <Entry> matchedEntries = new LinkedList <Entry> ();
 			matchedEntries = cw.getCwDB().findAll(board.createPattern(board.getHorizontalPositionOfCell(tmp), board.getVerticalPositionOfCell(tmp), 
-				board.getHorizontalPositionOfCell(tmp) ,board.getVerticalPositionOfCell(tmp) + possibleSizeOfEntry-1));
+				board.getHorizontalPositionOfCell(tmp) ,board.getVerticalPositionOfCell(tmp) + maxPossibleSizeOfEntry-1));
 			while( matchedEntries.size() > 0 && !flag){
-
 			    Entry possibleToReturn = matchedEntries.get(rnd.nextInt(matchedEntries.size()));
-			    if(!cw.contains(possibleToReturn.getWord()) && possibleToReturn.getWord().length() <= possibleSizeOfEntry){
+			    if(!cw.contains(possibleToReturn.getWord()) && possibleToReturn.getWord().length() <= maxPossibleSizeOfEntry){
 				flag = Boolean.TRUE;
 				toReturn = new CwEntry(possibleToReturn.getWord(), possibleToReturn.getClue(), board.getHorizontalPositionOfCell(tmp), board.getVerticalPositionOfCell(tmp), Direction.VERT);
-
 			    }	
 			    matchedEntries.remove(possibleToReturn);
 			}
-		    } possibleSizeOfEntry --; 
+		    } maxPossibleSizeOfEntry --; 
 		}
 	    }
 
@@ -80,8 +87,6 @@ public class HardStrategy extends Strategy{
 			while( matchedEntries.size() > 0 && !flag){
 			    Entry possibleToReturn = matchedEntries.get(rnd.nextInt(matchedEntries.size()));
 			    if(!cw.contains(possibleToReturn.getWord()) && possibleToReturn.getWord().length() <= possibleSizeOfEntry){
-
-
 				flag = Boolean.TRUE;
 				toReturn = new CwEntry(possibleToReturn.getWord(), possibleToReturn.getClue(), board.getHorizontalPositionOfCell(tmp), board.getVerticalPositionOfCell(tmp), Direction.HORIZ);
 			    }	
@@ -91,7 +96,7 @@ public class HardStrategy extends Strategy{
 		    } possibleSizeOfEntry --; 
 		}
 	    }
-	    startCell.remove(tmp);
+	    startCells.remove(tmp);
 	}
 	return toReturn;
     }
@@ -179,11 +184,11 @@ public class HardStrategy extends Strategy{
 	    }
 
 	    if(e.getY() > 0){ // don't put any content to one cell before the start cell
-		b.getCell(e.getY() - 1, e.getX()).setFalse();
+		b.getCell(e.getY() - 1, e.getX()).setAllAbilitiesFalse();
 	    }
 
 	    if (e.getY() + e.getWord().length() < b.getHeight()){ // don't put anything to one cell after the last cell where we want to put content of entry
-		b.getCell(e.getY() + e.getWord().length(), e.getX()).setFalse();
+		b.getCell(e.getY() + e.getWord().length(), e.getX()).setAllAbilitiesFalse();
 	    }
 
 	    for(int row = e.getY(); row < e.getY() + e.getWord().length(); row++){ // set content of entry to appropriate cell
@@ -218,12 +223,12 @@ public class HardStrategy extends Strategy{
 	    }
 
 	    if(e.getX() > 0){ // don't put any content to one cell before the start cell
-		b.getCell(e.getY(), e.getX() - 1).setFalse();
+		b.getCell(e.getY(), e.getX() - 1).setAllAbilitiesFalse();
 	    }
 
 	    if (e.getX() + e.getWord().length() < b.getWidth()){ // don't put anything to one cell after the last cell where we want to put content of entry
 
-		b.getCell(e.getY() , e.getX() + e.getWord().length()).setFalse();
+		b.getCell(e.getY() , e.getX() + e.getWord().length()).setAllAbilitiesFalse();
 	    }
 
 	    for(int collumn = e.getX(); collumn < e.getX() + e.getWord().length() ; collumn ++){ // set content of entry to appropriate cell

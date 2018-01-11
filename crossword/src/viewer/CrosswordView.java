@@ -14,8 +14,11 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.util.ArrayList;
-
-
+/**
+ * This is Viewer part of MVC model. It builds up the visual interface of the crossword
+ * @author ADRO
+ *
+ */
 public class CrosswordView extends JFrame{
 
     public final static int FRAME_WIDTH = 1000;

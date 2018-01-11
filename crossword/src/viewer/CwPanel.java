@@ -30,58 +30,51 @@ public class CwPanel extends JPanel{
     private Crossword actualCw;
     Iterator<CwEntry> iter ;
     CwEntry tmp;
-    LinkedList <JFormattedTextField> listOfTextFields;
+    LinkedList <JFormattedTextField> listOfTextFields; //all textfields of the crosswords
     JScrollPane pane;
     JPanel newPanel;
     private static final long serialVersionUID = 1L;
     int clueSpacing = 15;
-
-
     /**
-     * Paints all the componnets on the CwPanel
+     * Paints all the components on the CwPanel
      */
     public void paintComponent(Graphics g){
 
 	super.paintComponent(g);
 	Graphics2D g2 = (Graphics2D) g;
-
 	ListIterator<CwEntry> cwEntryIter;
-	CwEntry tmp;
-
-	int vertCounter = 1;
-	int horCounter = 1;
-
-
-	//print numbers by the entries
+	
 	if(actualCw != null){
 	    cwEntryIter = actualCw.getROEntryIter();
-	    while(cwEntryIter.hasNext()){
-		tmp = cwEntryIter.next();
-		if(tmp.getD() == Direction.HORIZ){
-		    g2.drawString(Integer.toString(vertCounter), (tmp.getX() + 1)*SQUARE_SIDE + CrosswordView.FRAME_WIDTH/2 - SQUARE_SIDE*actualCw.getBoard().getWidth()/2 - SQUARE_SIDE/2 + SQUARE_SIDE/6,
-			    (tmp.getY() + 1)*SQUARE_SIDE + SQUARE_SIDE*2/3);
-		    vertCounter++;
-
-
-		}else{
-
-		    g2.drawString(Integer.toString(horCounter), (tmp.getX() + 1)*SQUARE_SIDE + CrosswordView.FRAME_WIDTH/2 - SQUARE_SIDE*actualCw.getBoard().getWidth()/2 + SQUARE_SIDE/2,
-			    (tmp.getY() + 1)*SQUARE_SIDE - SQUARE_SIDE/6);
-		    horCounter++;			
-
-		}		
-	    }
-
+	    printWordsNumber(g2, cwEntryIter);
 	    drawCwSquares(g2);
 	    printOutClues(g2, cwEntryIter);
-
-
 	}
     }
-
+ /**
+  * The method prints word number by each word on the crossword
+   * @param g2, the object used to print the squares on the screen
+   * @param cwEntryIter, Read Only iterator if entries list
+  */
+    public void printWordsNumber(Graphics2D g2, ListIterator<CwEntry> cwEntryIter){
+	CwEntry tmp;
+	int vertCounter = 1;
+	int horCounter = 1;
+	while(cwEntryIter.hasNext()){
+	    tmp = cwEntryIter.next();
+	    if(tmp.getD() == Direction.HORIZ){
+		g2.drawString(Integer.toString(vertCounter), (tmp.getX() + 1)*SQUARE_SIDE + CrosswordView.FRAME_WIDTH/2 - SQUARE_SIDE*actualCw.getBoard().getWidth()/2 - SQUARE_SIDE/2 + SQUARE_SIDE/6,
+			(tmp.getY() + 1)*SQUARE_SIDE + SQUARE_SIDE*2/3);
+		vertCounter++;
+	    }else{
+		g2.drawString(Integer.toString(horCounter), (tmp.getX() + 1)*SQUARE_SIDE + CrosswordView.FRAME_WIDTH/2 - SQUARE_SIDE*actualCw.getBoard().getWidth()/2 + SQUARE_SIDE/2,
+			(tmp.getY() + 1)*SQUARE_SIDE - SQUARE_SIDE/6);    horCounter++;			
+	    }		
+	}
+    }
     /**
      * This method prints the crosswords' squares on the panel
-     * @param g2, the object used to print the squares on the 
+     * @param g2, the object used to print the squares on the screen
      */
     public void drawCwSquares(Graphics2D g2){
 
@@ -92,12 +85,14 @@ public class CwPanel extends JPanel{
 		    g2.drawRect( (col + 1)*SQUARE_SIDE + CrosswordView.FRAME_WIDTH/2 - SQUARE_SIDE*actualCw.getBoard().getWidth()/2,
 			    (row + 1)*SQUARE_SIDE, SQUARE_SIDE, SQUARE_SIDE);
 		    this.repaint();
-
 		}
 	    }
-
     }
-
+    /**
+     * Prints out clues associated with the words on the screen
+     * @param g2, the object used to print the squares on the screen
+     * @param cwEntryIter, Read Only iterator if entries list
+     */
     public void printOutClues(Graphics2D g2, ListIterator <CwEntry> cwEntryIter){
 
 	int horIncrement = 1;
@@ -119,20 +114,20 @@ public class CwPanel extends JPanel{
 		g2.drawString(Integer.toString(verIncrement)+". "+tmp.getClue(), 25, actualCw.getBoardCopy().getHeight()*SQUARE_SIDE + SQUARE_SIDE*4 + verIncrement*clueSpacing + actualCw.noOfHorEntries()*clueSpacing+10);
 		verIncrement++;
 	    }
-
 	}
-
     }
 
     public CwPanel(){
-
-
 	this.setBorder(BorderFactory.createTitledBorder("Generated crossword."));
 	this.setLayout(null);
 	this.setBackground(Color.WHITE);
-
     }
 
+    /**
+     * Prints solvable crossword where each field is an instance of JFormattedTextField
+     * where we can write on directly
+     * @throws ParseException
+     */
     public void printSolvable() throws ParseException{
 	if(listOfTextFields != null)
 	    this.removeAll();
@@ -148,16 +143,17 @@ public class CwPanel extends JPanel{
 			tmpTextField.setBounds( (col + 1)*SQUARE_SIDE + CrosswordView.FRAME_WIDTH/2 - SQUARE_SIDE*actualCw.getBoard().getWidth()/2,
 				(row + 1)*SQUARE_SIDE, SQUARE_SIDE, SQUARE_SIDE);
 			tmpTextField.setHorizontalAlignment(SwingConstants.CENTER);
-
 			this.add(tmpTextField);
-
 			this.repaint();
 
 		    }
 		}
 	}
     }
-
+    /**
+     * Prints Solved Crossword which you cannot edit. At the same time all correctly filled fields
+     * have green color while incorrect red.
+     */
     public void printSolved(){
 	ListIterator <JFormattedTextField> txtFieldsIter = listOfTextFields.listIterator();
 	JFormattedTextField tmpTextField;
@@ -173,25 +169,18 @@ public class CwPanel extends JPanel{
 			    tmpTextField.setValue(actualCw.getBoardCopy().getCell(row, col).getContent());
 			    tmpTextField.setForeground(Color.RED);
 			}
-
 			tmpTextField.setEditable(false);
-
-
 		    }
 		}
 	}
     }
-    public void setActualCw( Crossword actualCw){
 
+    public void setActualCw( Crossword actualCw){
 	this.actualCw = actualCw;
 	int newHeight = actualCw.getBoardCopy().getHeight()*SQUARE_SIDE + SQUARE_SIDE*4 + (actualCw.noOfHorEntries() + actualCw.noOfVerEntries())*clueSpacing 
 		+ actualCw.noOfHorEntries()*clueSpacing+100;
 	setPreferredSize(new Dimension(this.getPreferredSize().width, newHeight));
 	revalidate();
 	repaint();
-
     }
-
-
-
 }

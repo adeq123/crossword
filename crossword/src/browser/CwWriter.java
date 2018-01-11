@@ -61,7 +61,7 @@ public class CwWriter implements Writer{
 
 	writer.write( "***end***" + System.lineSeparator()+ System.lineSeparator());
 	//write the board as it is
-	String crosswordBoard = oneCrossword.printBoard();
+	String crosswordBoard = oneCrossword.toString();
 	String [] boardLineByLine = crosswordBoard.split("\n");
 	for(String word : boardLineByLine)
 	    writer.write(word+System.lineSeparator());

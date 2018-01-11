@@ -1,6 +1,6 @@
 /**
-- * This class model a board of a crossword
- * @author RoguskiA
+ * This class model a board used to place a crossword on it
+ * @author ADRO
  * @version 1.0
  */
 package model;
@@ -12,35 +12,27 @@ import FitedExeptions.WrongCoordinatesException;
 public class Board {
 
     private BoardCell [][] board;
-    private int w; /** number of rows of the board*/
-    private int k; /** number of columns of the board*/
+    private int noRows; 
+    private int noColumns;
 
     /**
-     * contruct the board with for a given number of columns and rows
-     * @param w number of rows
-     * @param k number of columns
+     * Constructs the board  for a given number of columns and rows
+     * @param noRows number of rows
+     * @param noColumns number of columns
      */
-    public Board (int w, int k){
+    public Board (int noRows, int noColumns){
 
-	this.w = w;
-	this.k = k;
-	board = new BoardCell [w] [k];
+	this.noRows = noRows;
+	this.noColumns = noColumns;
+	board = new BoardCell [noRows] [noColumns];
 
-	for(int i = 0;i < board.length; i++) // wiersze
-	    for(int j=0; j < board[0].length; j++){//kolumny
-		board [i] [j] = new BoardCell("");
+	for(int row = 0;row < board.length; row++) 
+	    for(int col=0; col < board[0].length; col++){
+		board [row] [col] = new BoardCell("");
 	    }
-
 	setDefaultAbilities();
-
-
     }
-    /**
-     * Sets proper properties of board cells. In corners and at the borders it sets Status to DISABLED
-     */
-    public void setPropertiesOfBoard(){
 
-    }
     /**
      * 
      * @return number of columns of the board
@@ -77,17 +69,18 @@ public class Board {
     }
 
     /**
-     * 
+     * This method runs through all of the cells on the board and creates
+     * a list of cells that can be used as starting cell 
      * @return List of all start cells
      */
     public LinkedList<BoardCell> getStartCells() {
 
-	LinkedList startCells = new LinkedList<BoardCell> ();
+	LinkedList<BoardCell> startCells = new LinkedList<BoardCell> ();
 
-	for(int i=0; i < this.board.length; i++)// wiersze
-	    for(int j=0; j < this.board[0].length; j++) {//kolumny
-		if (board [i] [j].getAbilities()[0][0] == true || board [i] [j].getAbilities()[1][0] == true){
-		    startCells.add(board [i] [j]);
+	for(int row=0; row < this.board.length; row++)
+	    for(int col=0; col < this.board[0].length; col++) {
+		if (board [row] [col].getAbilities()[0][0] == true || board [row] [col].getAbilities()[1][0] == true){
+		    startCells.add(board [row] [col]);
 		}
 	    }
 
@@ -95,7 +88,7 @@ public class Board {
     }
 
     /**
-     * this method creates a regular expression based on letters between given  coordinates in the board
+     * This method creates a regular expression based on board cells between given  coordinates in the board
      * @param int, fromx x coordinate of the first sign
      * @param int, fromy y coordinate of the first sign
      * @param int, tox x coordinate of the last sign
@@ -109,21 +102,16 @@ public class Board {
 	String pattern = "";
 
 	if(fromCol == toCol){ //vertical
-
 	    for(int i = fromRow; i <= toRow; i++){
 		if(board [i] [fromCol].checkContent()){
 		    pattern += board[i] [fromCol].getContent();
 		} else{
 		    pattern +=".";
 		}
-
 	    }
-
-
 	    return pattern;
 
 	}else if(fromRow == toRow){ //horizontal
-
 	    for(int i = fromCol; i <= toCol; i++){
 		if(board [fromRow] [i].checkContent()){
 		    pattern += board[fromRow] [i].getContent();
@@ -131,32 +119,41 @@ public class Board {
 		    pattern +=".";
 		}
 	    }
-
 	    return pattern;
 
 	}else throw new WrongCoordinatesException();
-
-	//return pattern;
     }
+
     /**
      * This method makes a deep copy of the board.
      */
     public Board copyBoard () {
-	Board result = new Board (this.w,this.k);
 
-	for(int i = 0;i < board.length; i++) // wiersze
-	    for(int j=0; j < board[0].length; j++){//kolumny
-		if(board [i] [j] != null){
-		    result.setCell(i, j, board [i] [j].copyCell());
-		    result.getCell(i, j).setAbilitiesMatrix(board [i] [j].getAbilities());
+	Board result = new Board (this.noRows,this.noColumns);
+
+	for(int row = 0;row < board.length; row++)
+	    for(int col=0; col < board[0].length; col++){
+		if(board [row] [col] != null){
+		    result.setCell(row, col, board [row] [col].copyCell());
+		    result.getCell(row, col).setAbilitiesMatrix(board [row] [col].getAbilities());
 		}
 	    }
 	return result;
     }
 
     /**
-     * Sets default abilities for cells on a side and in corners. Abilities is 2D matrix first row says where cell could be placed in horizontal
+     * Sets default abilities for cells on a side and in corners. In 2D abilities matrix first row says where cell could be placed in horizontal
      *direction (beginning, in, end) and second row in vertical. 
+     *
+     *Basically we have fours cases:
+     *
+     * - first row: the cells in the first row cannot be neither END nor IN cell of any word in VERTICAL direction.
+     * - last row: the cells in the last row cannot be neither BEGINING nor IN cell of any word in VERTICAL direction.
+     * - first column: the cells in the first row cannot be neither END nor IN cell of any word in HORIZONTAL direction.
+     * - last column: the cells in the last row cannot be neither BEGINING nor IN cell of any word in HORIZONTAL direction.
+     * 
+     * The corners conditions are included in those four as a mix of two.
+     *@see BoardCell
      */
     private void setDefaultAbilities(){
 
@@ -186,39 +183,37 @@ public class Board {
     }
 
     /**
-     * 
+     * The function traverse through the Board and search for 
+     * BoardCell given. 
      * @param suspect, a cell which position is to be checked
-     * @return int, a vertical position of input cell
+     * @return an int, a vertical position of input cell if found. -1 otherwise
      */
     public int getVerticalPositionOfCell(BoardCell suspect){
 
 	for(int row = 0; row < this.getHeight(); row++)
 	    for(int collumn = 0; collumn < this.getWidth(); collumn++){
-
-		if(this.getCell(row, collumn) == suspect)
+		if(this.getCell(row, collumn) == suspect){
 		    return row;
+		}    
 	    }
-
 	return -1;
 
     }
 
     /**
-     * 
+     * The function traverse through the Board and search for 
+     * BoardCell given. 
      * @param suspect, a cell which position is to be checked
-     * @return int, a horizontal position of input cell
+     * @return an int, a horizontal position of input cell if found. -1 otherwise
      */
     public int getHorizontalPositionOfCell(BoardCell suspect){
 
 	for(int row = 0; row < this.getHeight(); row++)
 	    for(int collumn = 0; collumn < this.getWidth(); collumn++)
-		if(this.getCell(row, collumn) == suspect)
+		if(this.getCell(row, collumn) == suspect){
 		    return collumn;
-
-
+		}
 	return -1;
-
     }
-
 }
 

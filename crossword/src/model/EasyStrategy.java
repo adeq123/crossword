@@ -3,17 +3,23 @@ package model;
 import dictionary.Entry;
 import java.util.*;
 import FitedExeptions.*;
+/**
+ * Concrete class of Strategy abstract class. The algorithms generates the simple crossword for
+ * Crossword given. Easy strategy generates plain crossword where the first column is the solution
+ * of the crossword and all of the crosswords phrases are horizontal
+ * @author ADRO
+ */
 public class EasyStrategy extends Strategy{
 
     private CwEntry password;
     Random rnd = new Random();
-    int index = 0;
-
+    int passwordLetterIndex = 0;
 
     /**
-     * Generates a random password based on database used in crossword. Password i checked by checkPassword() method
+     * Generates a random password (solution) based on database used in crossword. Password i checked by checkPassword() method
      * @param cross a Crossword whose database is used to generate the password
-     * @param board a Board where password is meant to be placed
+     * @param board a Board where password is meant to be placed. Used as separate parameter so that it is possible to work on 
+     * on the Board copy (separate instance)
      * @return a String, random password from crossword database
      * @throws Exception
      */
@@ -26,8 +32,8 @@ public class EasyStrategy extends Strategy{
 	Entry tmp;
 	do{			
 	    tmp = passList.get(rnd.nextInt(passList.size()-1));
-
 	}while(!checkPassword(cross, board, tmp.getWord()) && !passList.isEmpty());
+
 	password = new CwEntry(tmp.getWord(),tmp.getClue(),0,0,Direction.VERT);
 	return password;
     }
@@ -53,20 +59,17 @@ public class EasyStrategy extends Strategy{
 	    }
 	}
 
-
 	for(char key : passMap.keySet()){
-
-	    if (cross.getCwDB().findAll(key+"[a-z,A-Z]{1,"+Integer.toString(board.getWidth()-1)+"}").size() <= passMap.get(key))
+	    if (cross.getCwDB().findAll(key+"[a-z,A-Z]{1,"+Integer.toString(board.getWidth()-1)+"}").size() <= passMap.get(key)){
 		return false;
-
-
+	    }
 	}
 	return true;
     }
 
     /**
-     * Finds an entry which starts with letter pointed by global variable index. Its length cannot exceed the size of the board. 
-     * @return CwEntry with correct size and starting with correct word or null when crossowrd is full
+     * Finds an entry which starts with letter pointed by class variable index. Its length cannot exceed the size of the board. 
+     * @return CwEntry with correct size and starting with correct word or null when crossoword is full
      */
     public CwEntry findEntry(Crossword cw) throws NoMatchingWords {
 
@@ -79,26 +82,21 @@ public class EasyStrategy extends Strategy{
 	    resetIndex();
 	}
 
-	if (index < password.getWord().length()){
-
-	    tmpList = cw.getCwDB().findAll(password.getWord().charAt(index)+"[a-z,A-Z]{0,"+Integer.toString(cw.getBoardCopy().getWidth()-1)+"}");
-
+	if (passwordLetterIndex < password.getWord().length()){
+	    tmpList = cw.getCwDB().findAll(password.getWord().charAt(passwordLetterIndex)+"[a-z,A-Z]{0,"+Integer.toString(cw.getBoardCopy().getWidth()-1)+"}");
 	    do{
-
 		tmp = tmpList.get(rnd.nextInt(tmpList.size()));
 		tmpList.remove(tmp);
-
 	    }while(!tmpList.isEmpty() && cw.contains(tmp.getWord()));
-
-	    rand = new CwEntry(tmp.getWord(), tmp.getClue(), 0, index, Direction.HORIZ);
-	    index++;
+	    rand = new CwEntry(tmp.getWord(), tmp.getClue(), 0, passwordLetterIndex, Direction.HORIZ);
+	    passwordLetterIndex ++;
 	}
 
 	return rand;
     }
 
     /**
-     * adds an CwEntry to the correct position on the board.
+     * Adds an CwEntry to the correct position on the board.
      */
     public void updateBoard(Board b, CwEntry e) {
 	if(e.getD() == Direction.VERT){
@@ -122,7 +120,7 @@ public class EasyStrategy extends Strategy{
     }
 
     public void resetIndex (){
-	index = 0;
+	passwordLetterIndex = 0;
     }
 
 }

@@ -1,8 +1,10 @@
 /**
- * The class model a database with more functionalities than CwDB
- * @author RoguskiA
+ * Extended version of CwDB adding some extra functionalities regarding getting random entry, 
+ * entry starting with certain phrase or adding new entry in alphabetical way.
+ * @author ADRO
  * @version 1.0
  * @see CwDB
+ * @see Entry
  */
 package dictionary;
 
@@ -12,10 +14,8 @@ import java.util.regex.*;
 
 public class InteliCwDB extends CwDB{
 
-    private String fileName;
-
     /**
-     * construct a new database based on specified file
+     * Constructs a new database based on specified file
      * @param filename a string, path to our input file
      * @throws IOException 
      */
@@ -26,33 +26,31 @@ public class InteliCwDB extends CwDB{
     /**
      * Returns a List of Entries which include the specified pattern	
      * @param pattern a String by which we search for Entries
-     * @return List of entries which include the specified pattern
+     * @return List of entries which include the specified pattern or empty list if nothing found
      */
     public LinkedList<Entry> findAll (String pattern){
 
 	LinkedList <Entry> result = new LinkedList <Entry>();
 	Pattern p = Pattern.compile(pattern,Pattern.CASE_INSENSITIVE);
 
-	for(int i = 0; i < dict.size(); i++){// traverse through the list
+	for(int i = 0; i < dict.size(); i++){
 	    Matcher m = p.matcher(dict.get(i).getWord());
-	    if(m.matches())
+	    if(m.matches()){	
 		result.add(dict.get(i));
+	    }
 
 	}
 	return result;
-
     }
 
     /**
      * Returns random Entry from the list
-     * @return random Entry
+     * @return random Entry or empty Entry if dictionary is empty
      */
     public Entry getRandom(){
-
 	if (dict.size() > 0)
 	    return dict.get(new Random().nextInt(dict.size())-1);
 	return new Entry (" "," ");
-
     }
 
     /**
@@ -108,7 +106,8 @@ public class InteliCwDB extends CwDB{
 
     public void add (String word, String clue){
 
-	/*This block traverse through list and if it find a word which should be before any of the words on list and it adds it there move the rest to the right and come out of method*/
+	/*This block traverse through list and if it find a word which should be before any 
+	 * of the words on list and it adds it there move the rest to the right and come out of method*/
 	for(int i = 0; i <= dict.size()-1; i++){
 	    if(dict.get(i).getWord().compareToIgnoreCase(word)>=0){
 		dict.add(i, new Entry(word,clue));

@@ -1,6 +1,10 @@
 /**
- * this class model a simple data base, allows us to conduct some operations on it
- * @author RoguskiA
+ * This class model a simple data base which allows us to conduct some basic operations on them. 
+ * To load the database the input TXT file needs to be in proper format. The first line is a word 
+ * that we are looking for and the next one is the clue and so on. When saving database the same 
+ * format is kept
+ * @author ADRO
+ * @see Entry
  * @version 1.0
  */
 package dictionary;
@@ -10,16 +14,14 @@ import java.util.LinkedList;
 
 public class CwDB{
 
-    private String filename; /** filename of source of the database **/
-    protected LinkedList <Entry> dict = new LinkedList <Entry>(); /** a listed list of our entries **/
+    protected LinkedList <Entry> dict = new LinkedList <Entry>(); // a list of our entries
 
     /**
-     * construct a new database based on specified file
+     * Constructs a new database based on specified file
      * @param filename a string, path to our input file
      * @throws IOException 
      */
     public CwDB(String filename) throws IOException{
-	this.filename = filename;
 	this.createDB(filename);
     }
 
@@ -32,28 +34,22 @@ public class CwDB{
     public void add(String word, String clue){
 	System.out.println(word+" "+clue);
 	dict.add(new Entry(word,clue));
-
     }
 
     public void add(int i, Entry en){
-
 	dict.add(i, en);
-
     }
 
     /**
      * Returns an Entry from our Linked List which includes specified word
-     * @param word a string by which we search for a word
-     * @return
+     * @param word, a string by which we search for a word
+     * @return, an Entry if found or null if there is no such Entry
      */
     public Entry get (String word){
 
 	for(int i=0; i<=dict.size()-1;i++) // traverse through the list
 	    if(dict.get(i).getWord().contains(word))
 		return dict.get(i);
-
-
-
 	return null;
     }
 
@@ -63,7 +59,7 @@ public class CwDB{
      */
     public void remove(String word){
 
-	for(int i=0; i<=dict.size()-1;i++) // traverse through the list
+	for(int i=0; i<=dict.size()-1;i++) 
 	    if(dict.get(i).getWord().equals(word)) 
 		dict.remove(i);
 
@@ -77,13 +73,12 @@ public class CwDB{
 
 	try (Writer writer = new BufferedWriter(new OutputStreamWriter(
 		new FileOutputStream(filename), "utf-8"))) {
-	    for(int i=0; i<=dict.size()-1;i++)
-		writer.write(i+" "+dict.get(i).getWord()+System.lineSeparator()); //writer.write(i+". "+dict.get(i).getClue()+" "+dict.get(i).getWord()+System.lineSeparator());
-
+	    for(int i=0; i<=dict.size()-1;i++){
+		writer.write(i+" "+dict.get(i).getWord()+System.lineSeparator()); 
+	    }
 	    writer.close();
-
 	}catch (IOException ex) {
-	    // report
+	    System.out.println("IOException! check path given...");
 	} 
     }
 
@@ -92,36 +87,32 @@ public class CwDB{
      * @return an int, the size of the list
      */
     public int getSize(){
-
 	return dict.size();
-
     }
 
     /**
      * Creates the List based on the given filename
      * @param filename source of the list
-     * @throws IOException the exception is throwed when file doesn't exist
+     * @throws IOException the exception is thrown when file doesn't exist
      */
     protected void createDB (String filename) throws IOException{
 
 	String word;
 	String clue;
+	BufferedReader read = new BufferedReader(new FileReader(filename));
 
-	BufferedReader czytaj = new BufferedReader(new FileReader(filename));
-
-	while(((word = czytaj.readLine()) != null) && ((clue = czytaj.readLine()) != null)){	
-
+	while(((word = read.readLine()) != null) && ((clue = read.readLine()) != null)){	
 	    add(word,clue);	
 	}
+	read.close();
     }
 
     /**
-     * Prints whole list
+     * Prints whole list on the console
      */
     public void printOut(){
 
 	for(int i = 0; i <= dict.size()-1; i++){
-
 	    System.out.println(i+". "+dict.get(i).getClue()+" "+dict.get(i).getWord());
 	}
 

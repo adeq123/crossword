@@ -1,103 +1,82 @@
 /**
- * this class model a simple corssword
- * 
- * @author RoguskiA
+ * This class model a simple Crossword with Board of given size, database to search for words / clues, list of entries use on the board
+ * and strategy used to generate the Crossword.
+ * @author ADRO
  * @version 1.0
  */
 package model;
 
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 import FitedExeptions.NoMatchingWords;
 import FitedExeptions.WrongCoordinatesException;
-import dictionary.Entry;
 import dictionary.InteliCwDB;
 import model.Strategy.strategyID;
 
 public class Crossword {
 
-    private LinkedList<CwEntry> entries = new LinkedList<CwEntry>(); /**List of entries USED on the board*/
-    private Board b; /** board that where corssword is displated*/
-    private InteliCwDB cwdb; /** database of entries*/
-    private final long ID;
-    strategyID strID;
-
+    private LinkedList<CwEntry> entriesUsed = new LinkedList<CwEntry>(); 
+    private Board crosswordBoard; 
+    private InteliCwDB entriesDataBase; 
+    private strategyID strID;
 
     /**
-     * Construct new crossoword for a given height and widith
+     * Construct new crossword for a given height and width
      * @param h height of crossword
-     * @param w widith of crossword
+     * @param w width of crossword
      */
-    public Crossword (int h, int w, long ID){
-
-	this.b = new Board(h,w);
-	this.ID = ID;
-
+    public Crossword (int h, int w){
+	this.crosswordBoard = new Board(h,w);
     }
 
     /**
-     * Construct new crossoword for a given height and widith
-     * @param h height of crossword
-     * @param w widith of crossword
-     */
-    public Crossword (int h, int w){	
-	this(h,w,-1);
-
-    }
-    /**
-     * Loads a crossword from a file
+     * Construct new crossword based on the crosswords txt file stored
      * @param oneFile a path to the crossword to be loaded
      * @param cwdb a database to be used to find clues for this crossword
      * @throws IOException
      */
     public Crossword (File oneFile, InteliCwDB cwdb) throws IOException{
-	this.cwdb = cwdb;
+	this.entriesDataBase = cwdb;
 	String line;
-	BufferedReader czytaj = new BufferedReader(new FileReader(oneFile.getAbsolutePath()));
+	BufferedReader read = new BufferedReader(new FileReader(oneFile.getAbsolutePath()));
 	Strategy s;
-	if(Long.getLong(oneFile.getName().substring(0, oneFile.getName().length() - 4)) != null){
-	    ID = Long.getLong(oneFile.getName().substring(0, oneFile.getName().length() - 4));
-	}else
-	    ID = -1;
-	line = czytaj.readLine();
 
+	//check strategy
+	line = read.readLine();
 	if(line.equals("Hard")){
 	    this.strID = strategyID.Hard;
 	    s = new HardStrategy();
-	}else
+	}else{
 	    s = new EasyStrategy();
+	}
 
-	line= czytaj.readLine();
-	this.b = new Board(Integer.parseInt(line.split(" ")[0]), Integer.parseInt(line.split(" ")[1]));		
+	// cunstruct the board of given size
+	line = read.readLine();
+	this.crosswordBoard = new Board(Integer.parseInt(line.split(" ")[0]), Integer.parseInt(line.split(" ")[1]));		
 
-	czytaj.readLine();
-
+	read.readLine(); //skip line
+	//read the entries line by line and build the crossword
 	String word, clue;
 	int x,y;
 	Direction dir;
 
-	while((!(line = czytaj.readLine()).equals("***end***"))){
+	while((!(line = read.readLine()).equals("***end***"))){
 	    word = line.split(" ")[0];
 	    clue = cwdb.get(word).getClue();
 	    x = Integer.parseInt(line.split(" ")[1]);
 	    y = Integer.parseInt(line.split(" ")[2]);
 	    if(line.split(" ")[3].equals("VERT")){
 		dir = Direction.VERT;
-	    }else
+	    }else{
 		dir = Direction.HORIZ;
-
-
+	    }
 	    this.addCwEntry(new CwEntry(word, clue, x, y, dir), s);
-
 	}
-	czytaj.close();
-
+	read.close();
     }
 
     /**
@@ -105,7 +84,7 @@ public class Crossword {
      * @return read only iterator of entries (all entries in the given crossword)
      */
     public ListIterator<CwEntry> getROEntryIter(){
-	return Collections.unmodifiableList(entries).listIterator();
+	return Collections.unmodifiableList(entriesUsed).listIterator();
     }
 
     /**
@@ -115,36 +94,14 @@ public class Crossword {
      */
     public boolean contains(String word){
 	boolean result = false;
-	for(int i = 0; i < this.entries.size() && !result; i++) {
-	    if (entries.get(i).getWord().equals(word)){
+	for(int i = 0; i < this.entriesUsed.size() && !result; i++) {
+	    if (entriesUsed.get(i).getWord().equals(word)){
 		result = true;
 	    }		
 	}
 	return result;
     }
 
-    /**
-     * Getter method for board object copy
-     * @return Deep copy of the board
-     */
-    public Board getBoardCopy(){
-	return b.copyBoard();
-    }
-
-    /**
-     * Setter method for corsswords database of Entries (word + clues)
-     * @param cwdb, database to be set
-     */
-    public void setCwDB(InteliCwDB cwdb){
-	this.cwdb = cwdb;
-    }
-
-    /**
-     * Getter method for corsswords database of Entries (word + clues)
-     */
-    public InteliCwDB getCwDB(){
-	return this.cwdb;
-    }
 
     /**
      * Method which add new CwEntry (standard entry + possistion and status) to the crossword according to preferd strategy
@@ -152,55 +109,55 @@ public class Crossword {
      * @param s Strategy to be used
      */
     public final void addCwEntry(CwEntry cwe, Strategy s){
-	entries.add(cwe);
-	s.updateBoard(this.b,cwe);
+	entriesUsed.add(cwe);
+	s.updateBoard(this.crosswordBoard,cwe);
     }
 
     /**
-     * Generates a crossword
-     * @param s
+     * Generates a crossword for a given strategy
+     * @param strategy
      * @throws WrongCoordinatesException 
      * @throws Exception 
      */
-    public final void generate(Strategy s) throws NoMatchingWords, WrongCoordinatesException{
+    public final void generate(Strategy strategy) throws NoMatchingWords, WrongCoordinatesException{
 
-	if(s instanceof EasyStrategy)
+	if(strategy instanceof EasyStrategy)
 	    strID = strategyID.Easy;
 	else strID = strategyID.Hard;
-
 	CwEntry e;
-	while((e = s.findEntry(this)) != null){
-	    addCwEntry(e,s);
+	while((e = strategy.findEntry(this)) != null){
+	    addCwEntry(e,strategy);
 	}
     }
-
+    /**
+     * 
+     * @return true if crossword is empty, true otherwise
+     */
     public boolean isEmpty(){
-
-	return entries.isEmpty();
-
+	return entriesUsed.isEmpty();
     }
 
     /**
-     * prints a crosswords board sign by sign
-     * @return
+     * Prints a crosswords board sign by sign
+     * @return, String representation of the crossword
      */
-    public String printBoard(){
-
+    public String toString(){
 	String cwString ="";
-	for(int r = 0;r <  b.getHeight();r++){
-	    for(int c = 0;c < b.getWidth();c++){
-		if(!b.getCell(r, c).checkContent()){
+	
+	for(int r = 0;r <  crosswordBoard.getHeight();r++){
+	    for(int c = 0;c < crosswordBoard.getWidth();c++){
+		if(!crosswordBoard.getCell(r, c).checkContent()){
 		    cwString = cwString + " ";
 		}else{
-		    cwString = cwString + b.getCell(r, c).getContent();
+		    cwString = cwString + crosswordBoard.getCell(r, c).getContent();
 		}
 	    } cwString =cwString+"\n";
 	}
 	return cwString;
-
     }
+    
     public Board getBoard(){
-	return b;
+	return crosswordBoard;
     }
 
     /**
@@ -210,8 +167,8 @@ public class Crossword {
     public int noOfVerEntries(){
 	int noOfVerEntries = 0;
 
-	for(int i = 0;i < entries.size();i++)
-	    if(entries.get(i).getD() == Direction.VERT)
+	for(int i = 0;i < entriesUsed.size();i++)
+	    if(entriesUsed.get(i).getD() == Direction.VERT)
 		noOfVerEntries++;
 	return noOfVerEntries;
     }
@@ -223,13 +180,26 @@ public class Crossword {
     public int noOfHorEntries(){
 	int noOfHorEntries = 0;
 
-	for(int i = 0;i < entries.size();i++)
-	    if(entries.get(i).getD() == Direction.VERT)
+	for(int i = 0;i < entriesUsed.size();i++)
+	    if(entriesUsed.get(i).getD() == Direction.VERT)
 		noOfHorEntries++;
 	return noOfHorEntries;
     }
 
     public strategyID getStartegy(){
 	return strID;
+    }
+
+    public Board getBoardCopy(){
+	return crosswordBoard.copyBoard();
+    }
+
+    public void setCwDB(InteliCwDB cwdb){
+	this.entriesDataBase = cwdb;
+    }
+
+
+    public InteliCwDB getCwDB(){
+	return this.entriesDataBase;
     }
 }

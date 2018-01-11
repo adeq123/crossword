@@ -15,10 +15,14 @@ import FitedExeptions.NoActualCw;
 import FitedExeptions.NoMatchingWords;
 import FitedExeptions.WrongCoordinatesException;
 import browser.CwBrowser;
-import dictionary.*;
 import model.*;
 import viewer.*;
 
+/**
+ * A controller part of MVC model. Being a connection point between Model and Viewer
+ * @author ADRO
+ *
+ */
 public class crosswordController {
 
     private CwBrowser theModel;
@@ -78,33 +82,22 @@ public class crosswordController {
 		JOptionPane.showMessageDialog(theView,"No actual cw please generate the crossword!");
 		e1.printStackTrace();
 	    }
-
-
-
 	}
-
     }
 
     public class SolveListener implements ActionListener{
-
 	public void actionPerformed(ActionEvent e) {
 	    cwPanel.printSolved();
-
 	}
-
     }
 
     public class DotsListener implements ActionListener{
-
 	public void actionPerformed(ActionEvent e) {
-
 	    int returnVal = theView.getFileChooser().showOpenDialog(theView);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 		newDatabasePath = theView.getFileChooser().getSelectedFile().getAbsolutePath();
 	    }
-
 	}
-
     }
 
     public class LoadListener implements ActionListener{
@@ -118,56 +111,44 @@ public class crosswordController {
 		}
 	    }else
 		JOptionPane.showMessageDialog(theView, "No file choosen! Please selected correct database file");
-
 	}
-
     }
 
     public class LoadCwDotsListener implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
-
 	    int returnVal = theView.getCwChooser().showOpenDialog(theView);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 		crosswordPath = theView.getCwChooser().getSelectedFile().getAbsolutePath();
 	    }
-
 	}
-
     }
+    
     public class LoadCwListener implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 	    if(crosswordPath != null){
 		try {	
-
 		    theModel.loadSingleCwAndMakeAcutal(crosswordPath);
 		    cwPanel.setActualCw(theModel.getActualCws());
 		    cwPanel.printSolvable();
-
-
 		}catch (IOException e1) {
-
 		    JOptionPane.showMessageDialog(theView, "Input / output error. Please selected correct crossword file");
 		} catch (ParseException e1) {
-
 		    JOptionPane.showMessageDialog(theView, "Single letter only!");
 		    e1.printStackTrace();
 		}
 	    }else
 		JOptionPane.showMessageDialog(theView, "No file choosen! Please selected correct crossword file");
-
 	}
-
     }
+    
     public class SaveListener implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
-
 	    int retrival = theView.getFileSaver().showSaveDialog(null);			
 	    if (retrival == JFileChooser.APPROVE_OPTION) {
 		try {
-
 		    theModel.saveAndMakeTmpActual(theView.getFileSaver().getSelectedFile().getParent(), theView.getFileSaver().getSelectedFile().getName());		            
 		} catch (IOException ex) {
 		    JOptionPane.showMessageDialog(theView, "Input / output error. Please select proper name and destination");
@@ -177,16 +158,14 @@ public class crosswordController {
 		    ncw.printStackTrace();
 		}
 	    }
-
 	}
 
     }
+    
     public class PrintCwListener implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
-
 	    String fileName = null;
-
 	    int returnVal = theView.getCwChooser().showSaveDialog(null);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 		fileName = theView.getCwChooser().getSelectedFile().getAbsolutePath();
@@ -202,7 +181,6 @@ public class crosswordController {
 		e2.printStackTrace();
 	    }
 	}
-
     }
 
     public class EasyStrategyListener implements ActionListener{
@@ -210,9 +188,7 @@ public class crosswordController {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    actualStrategy = new EasyStrategy();
-
 	}
-
     }
 
     public class HardStrategyListener implements ActionListener{
@@ -220,9 +196,7 @@ public class crosswordController {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    actualStrategy = new HardStrategy();
-
 	}
-
     }
 
     public class NextListener implements ActionListener{
@@ -240,12 +214,9 @@ public class crosswordController {
 	    try {
 		cwPanel.printSolvable();
 	    } catch (ParseException e1) {
-
-
 		e1.printStackTrace();
 	    }
 	}
-
     }
 
     public class PreviousListener implements ActionListener{

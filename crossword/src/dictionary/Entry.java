@@ -7,12 +7,12 @@ package dictionary;
 
 public class Entry {
 
-    private String word; /** String which is soolution to our clue	*/
+    private String word; /** String which is solution to our clue	*/
     private String clue; /** part of the Entry, question asked */
 
     /**
      * Construct a new Entry using a given word and clue
-     * @param word a String which is soolution to our clue	
+     * @param word a String which is solution to our clue	
      * @param clue a String, part of the Entry, question asked
      */
     public Entry (String word, String clue){
