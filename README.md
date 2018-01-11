@@ -46,3 +46,5 @@ Adrian Roguski with gudience included on AGH object oriented programming course 
   Solved crossword. Green fields were correct the readones not. Crossword was generated with Hard strategy  
 ![](crossword/images/Hard.png)
 
+## Bugs
+  HardStrategy - sometimes generates the crossword with one word only
